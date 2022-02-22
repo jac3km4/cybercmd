@@ -1,0 +1,15 @@
+[package]
+name = "cybercmd"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+detour = "0.8"
+winapi = { version = "0.3", features = ["minwindef", "winnt", "libloaderapi"] }
+widestring = "0.5"
+lazy_static = "1"
+configparser = "3"
+microtemplate = "1"
