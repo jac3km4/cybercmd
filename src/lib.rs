@@ -8,7 +8,7 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::ffi::OsStr;
 use std::fmt::Write;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::{ffi::CString, mem};
 use widestring::{U16CStr, U16CString};
@@ -18,7 +18,7 @@ use winapi::um::winnt::{DLL_PROCESS_ATTACH, LPCWSTR};
 
 #[derive(Substitutions, Clone)]
 struct ConfigContext<'a> {
-    game_dir: Cow<'a, str>,
+    game_dir: &'a str,
 }
 
 #[derive(Debug, Deserialize)]
@@ -28,9 +28,9 @@ pub struct ModConfig {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Task {
-    command: String,
-    args: Vec<String>,
+#[serde(tag = "command")]
+pub enum Task {
+    InvokeScc { path: String, custom_bundle: String },
 }
 
 static CMD_STR: Lazy<U16CString> = Lazy::new(try_get_final_cmd);
@@ -74,8 +74,9 @@ fn try_get_final_cmd() -> U16CString {
 fn get_final_cmd(initial_cmd_ustr: &U16CStr) -> Result<U16CString> {
     let mut cmd = initial_cmd_ustr.to_string()?;
     let path = get_game_path()?;
+    let path = path.to_string_lossy();
     let ctx = ConfigContext {
-        game_dir: path.to_string_lossy(),
+        game_dir: path.as_ref(),
     };
     for config in get_configs()? {
         write_mod_cmd(&config, &ctx, &mut cmd)?;
@@ -86,22 +87,35 @@ fn get_final_cmd(initial_cmd_ustr: &U16CStr) -> Result<U16CString> {
 
 fn write_mod_cmd<W: Write>(config: &ModConfig, ctx: &ConfigContext, mut writer: W) -> Result<()> {
     for (key, val) in &config.args {
-        let rendered = render(&val, ctx.clone());
-        write!(writer, " -{key} \"{rendered}\"")?;
+        let rendered = render(val, ctx.clone());
+        write!(writer, " -{key} {rendered:?}")?;
     }
     Ok(())
 }
 
 fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
     for task in &config.tasks {
-        let command = render(&task.command, ctx.clone());
-        let args: Vec<_> = task
-            .args
-            .iter()
-            .map(|arg| render(arg, ctx.clone()))
-            .collect();
+        match task {
+            Task::InvokeScc {
+                path,
+                custom_bundle,
+            } => {
+                let cmd = Path::new(ctx.game_dir)
+                    .join("engine")
+                    .join("tools")
+                    .join("scc.exe");
+                let path = render(path, ctx.clone());
+                let custom_bundle = render(custom_bundle, ctx.clone());
 
-        Command::new(&command).args(args).status().ok();
+                Command::new(&cmd)
+                    .arg("-compile")
+                    .arg(path)
+                    .arg("-customPath")
+                    .arg(custom_bundle)
+                    .status()
+                    .ok();
+            }
+        }
     }
     Ok(())
 }
