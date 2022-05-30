@@ -3,11 +3,11 @@ use detour::static_detour;
 use microtemplate::{render, Substitutions};
 use once_cell::sync::Lazy;
 use serde::Deserialize;
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::error::Error;
 use std::ffi::OsStr;
 use std::fmt::Write;
+use std::os::windows::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::{ffi::CString, mem};
@@ -106,12 +106,14 @@ fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
                     .join("scc.exe");
                 let path = render(path, ctx.clone());
                 let custom_bundle = render(custom_bundle, ctx.clone());
+                const NO_WINDOW_FLAGS: u32 = 0x08000000;
 
                 Command::new(&cmd)
                     .arg("-compile")
                     .arg(path)
                     .arg("-customPath")
                     .arg(custom_bundle)
+                    .creation_flags(NO_WINDOW_FLAGS)
                     .status()
                     .ok();
             }
