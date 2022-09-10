@@ -30,7 +30,10 @@ pub struct ModConfig {
 #[derive(Debug, Deserialize)]
 #[serde(tag = "command")]
 pub enum Task {
-    InvokeScc { path: String, custom_bundle: String },
+    InvokeScc {
+        path: String,
+        custom_cache_dir: String,
+    },
 }
 
 static CMD_STR: Lazy<U16CString> = Lazy::new(try_get_final_cmd);
@@ -98,20 +101,20 @@ fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
         match task {
             Task::InvokeScc {
                 path,
-                custom_bundle,
+                custom_cache_dir,
             } => {
                 let cmd = Path::new(ctx.game_dir)
                     .join("engine")
                     .join("tools")
                     .join("scc.exe");
                 let path = render(path, ctx.clone());
-                let custom_bundle = render(custom_bundle, ctx.clone());
+                let custom_bundle = render(custom_cache_dir, ctx.clone());
                 const NO_WINDOW_FLAGS: u32 = 0x08000000;
 
                 Command::new(&cmd)
                     .arg("-compile")
                     .arg(path)
-                    .arg("-customPath")
+                    .arg("-customCacheDir")
                     .arg(custom_bundle)
                     .creation_flags(NO_WINDOW_FLAGS)
                     .status()
