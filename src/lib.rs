@@ -132,10 +132,7 @@ fn get_game_path() -> Result<PathBuf> {
 }
 
 fn get_configs() -> Result<Vec<ModConfig>> {
-    let path = get_game_path()?
-        .join("engine")
-        .join("config")
-        .join("cybercmd");
+    let path = get_game_path()?.join("r6").join("config").join("cybercmd");
     let mut configs = vec![];
 
     for entry in std::fs::read_dir(path)? {

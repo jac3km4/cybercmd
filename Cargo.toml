@@ -9,9 +9,13 @@ crate-type = ["rlib", "cdylib"]
 [dependencies]
 detour = "0.8"
 winapi = { version = "0.3", features = ["minwindef", "winnt", "libloaderapi"] }
-widestring = "0.5"
-once_cell = "1.12"
+widestring = "1"
+once_cell = "1.14"
 microtemplate = "1"
 toml = "0.5"
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
 anyhow = "1"
+
+[profile.release]
+lto = true
+strip = true
