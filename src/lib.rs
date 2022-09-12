@@ -1,5 +1,5 @@
 use anyhow::Result;
-use detour::static_detour;
+use detour2::static_detour;
 use microtemplate::{render, Substitutions};
 use once_cell::sync::Lazy;
 use serde::Deserialize;
@@ -33,6 +33,7 @@ pub enum Task {
     InvokeScc {
         path: String,
         custom_cache_dir: String,
+        terminate_on_errors: Option<bool>,
     },
 }
 
@@ -102,6 +103,7 @@ fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
             Task::InvokeScc {
                 path,
                 custom_cache_dir,
+                terminate_on_errors,
             } => {
                 let cmd = Path::new(ctx.game_dir)
                     .join("engine")
@@ -111,7 +113,7 @@ fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
                 let custom_bundle = render(custom_cache_dir, ctx.clone());
                 const NO_WINDOW_FLAGS: u32 = 0x08000000;
 
-                Command::new(&cmd)
+                let res = Command::new(&cmd)
                     .arg("-compile")
                     .arg(path)
                     .arg("-customCacheDir")
@@ -119,6 +121,9 @@ fn run_mod_tasks(config: &ModConfig, ctx: &ConfigContext) -> Result<()> {
                     .creation_flags(NO_WINDOW_FLAGS)
                     .status()
                     .ok();
+                if *terminate_on_errors == Some(true) && !matches!(res, Some(st) if st.success()) {
+                    std::process::exit(0);
+                }
             }
         }
     }
