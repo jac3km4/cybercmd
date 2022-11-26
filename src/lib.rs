@@ -52,12 +52,9 @@ unsafe fn main() -> Result<(), Box<dyn Error>> {
 
     GetCommandLineW
         .initialize(target, || {
-            if std::env::current_exe()
-                .as_deref()
-                .ok()
-                .and_then(|path| path.file_stem())
-                == Some(OsStr::new("Cyberpunk2077"))
-            {
+            let exe = std::env::current_exe();
+            let stem = exe.as_deref().ok().and_then(Path::file_stem);
+            if matches!(stem, Some(exe) if exe.eq_ignore_ascii_case("Cyberpunk2077")) {
                 CMD_STR.as_ptr()
             } else {
                 GetCommandLineW.call()
