@@ -1,5 +1,5 @@
 use anyhow::Result;
-use detour2::static_detour;
+use detour::static_detour;
 use microtemplate::{render, Substitutions};
 use once_cell::sync::Lazy;
 use serde::Deserialize;
