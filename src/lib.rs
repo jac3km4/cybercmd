@@ -140,8 +140,8 @@ fn get_configs() -> Result<Vec<ModConfig>> {
     for entry in std::fs::read_dir(path)? {
         let entry = entry?;
         if entry.path().extension() == Some(OsStr::new("toml")) {
-            let contents = std::fs::read(entry.path())?;
-            configs.push(toml::from_slice(&contents)?);
+            let contents = std::fs::read_to_string(entry.path())?;
+            configs.push(toml::from_str(&contents)?);
         }
     }
     Ok(configs)
