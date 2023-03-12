@@ -9,5 +9,5 @@ Command-line argument loader for Cyberpunk 2077.
         - if prompted, do not overwrite any files except for `cybercmd.asi`
 
 ### usage from mods
-When the game starts, it'll look for arguments to load in TOML files placed inside `Cyberpunk 2077\engine\config\cybercmd\`.
+When the game starts, it'll look for arguments to load in TOML files placed inside `Cyberpunk 2077\r6\config\cybercmd\`.
 You can see a reference file [here](https://github.com/jac3km4/cybercmd/blob/master/reference/cmd.toml).
