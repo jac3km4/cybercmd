@@ -1,0 +1,50 @@
+[args]
+a=true
+# unattended = "true"
+# forceRawTweakDB = "true"
+# profiler = "true"
+# disableRayTracing = "true"
+# disableRayTracedReflection = "true"
+# disableRayTracedTransparentReflection = "true"
+# dlss = "true"
+# windowCaption = "Cyberbug 2077"
+# scriptVersion = "Debug" | "Profiling" | "Final" | "Final_noopts"
+# tweakdbBlobPath = "{game_dir}\r6\cache\tweakdb.bin"
+# scriptsBlobPath = "{game_dir}\r6\cache\final.redscripts"
+# pvdDumpToFile = "true"
+# renderPreset = "Game" | "User"
+# engine = "BackendGameEngine"
+# interopstartingport = ?
+# watchdogTimeout = ?
+# automator = ?
+
+# gameDefinition = "base\quest\test\farm_bd_perf.gamedef"
+# world = ?
+# startSpawnPoint = ?
+# startPosition = ?
+# startRotation = ?
+# startQuest = ?
+# playerGender = "Male" | "Female"
+# alwaysSpawnedDisabled = "true"
+# forceSpawnInView = "true"
+# entitySpawnRadius = 100.0
+# noCrowd = "true"
+# noReducedCrowd = "true"
+# ignoreSavedCensorFlags = "true"
+# benchmark = "true"
+
+# mainmenu = "false"
+# autojoin = "true"
+# server = "127.0.0.1"
+# sessionType = "LAN" | "Internet"
+# playerRecordID = ?
+# sessionLength = ?
+# state = ?
+# save = "AutoSave-0"
+# forceShutdownAfterSessionLoaded = "true"
+# skipStartScreen = "true"
+
+[[tasks]]
+command = "InvokeScc"
+path = "{game_dir}\\r6\\scripts"
+custom_cache_dir = "{game_dir}\\r6\\cache\\modded"

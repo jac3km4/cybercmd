@@ -1,7 +1,10 @@
+cargo-features = ["per-package-target"]
+
 [package]
 name = "cybercmd"
 version = "0.0.7"
 edition = "2021"
+forced-target = "x86_64-pc-windows-msvc"
 
 [lib]
 crate-type = ["rlib", "cdylib"]
@@ -15,6 +18,9 @@ microtemplate = "1"
 toml = "0.7"
 serde = { version = "1", features = ["derive"] }
 anyhow = "1"
+log = "0.4.17"
+dunce = "1.0.3"
+chrono = "0.4.24"
 
 [profile.release]
 lto = true

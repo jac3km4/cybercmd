@@ -41,7 +41,8 @@
 # state = ?
 # save = "AutoSave-0"
 # forceShutdownAfterSessionLoaded = "true"
-# skipStartScreen = "true"
+skipStartScreen = "true"
+modded = "true"
 
 [[tasks]]
 command = "InvokeScc"
