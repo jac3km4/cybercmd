@@ -9,18 +9,39 @@ forced-target = "x86_64-pc-windows-msvc"
 [lib]
 crate-type = ["rlib", "cdylib"]
 
+[workspace]
+members = ["crates/xtask", "crates/test", "crates/common"]
+
+[workspace.dependencies]
+cybercmd = { path = "." }
+test = { path = "crates/test" }
+xtask = { path = "crates/xtask" }
+common = { path = "crates/common" }
+log = "0.4"
+anyhow = "1"
+once_cell = "1"
+thiserror = "1"
+xshell = "0.2"
+clap = { version = "4", features = ["cargo"] }
+reqwest = "0.11"
+zip = "0.6"
+zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag="v0.6.2" }
+normpath = "1"
+
 [dependencies]
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
 winapi = { version = "0.3", features = ["minwindef", "winnt", "libloaderapi"] }
 widestring = "1"
-once_cell = "1"
+once_cell = { workspace = true }
 microtemplate = "1"
 toml = "0.7"
 serde = { version = "1", features = ["derive"] }
-anyhow = "1"
-log = "0.4.17"
+anyhow = { workspace = true }
+log = { workspace = true }
 dunce = "1.0.3"
 chrono = "0.4.24"
+log4rs = "1.2.0"
+common = { workspace = true }
 
 [profile.release]
 lto = true

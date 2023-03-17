@@ -1,15 +1,54 @@
-use std::path::PathBuf;
+use common::{make_path, PathBuf, PathExt};
+use once_cell::sync::Lazy;
 
-pub fn get_game_path() -> anyhow::Result<PathBuf> {
-    let exe = std::env::current_exe()?;
-    let path = exe.parent().unwrap().parent().unwrap().parent().unwrap();
-    Ok(path.to_path_buf())
+// // TODO [AndASM]: Learn how to write idiomatic documentation comments
+/*
+   In this module: Lazily initialize a singleton with all our paths pre-computed.
+*/
+
+pub struct Paths {
+    pub game: PathBuf,
+    pub logs: PathBuf,
+    pub configs: PathBuf,
+    pub tools: PathBuf,
+    pub scc: PathBuf,
+    pub game_str: String,
 }
 
-pub fn get_log_file_path() -> anyhow::Result<PathBuf> {
-    let game_path = match get_game_path() {
-        Ok(path) => path,
-        Err(e) => return Err(e),
-    };
-    Ok(game_path.join("r6").join("logs").join("cybercmd.log"))
+pub static PATHS: Lazy<Paths> = Lazy::new(get_paths);
+
+fn get_paths() -> Paths {
+    // // TODO [AndASM]: Can this all be done in the Paths {} literal without cloning game?
+    let game = get_game_path();
+    let logs = make_path!(&game, "r6", "logs");
+    let configs = make_path!(&game, "r6", "config", "cybercmd");
+    let tools = make_path!(&game, "tools", "cybercmd");
+    let scc = make_path!(&game, "engine", "tools", "scc.exe");
+    let game_str = game.as_os_str().to_string_lossy().to_string();
+
+    Paths {
+        game,
+        logs,
+        configs,
+        tools,
+        scc,
+        game_str,
+    }
+}
+
+fn get_game_path() -> PathBuf {
+    let exe = std::env::current_exe()
+        .expect("Cybercmd cannot identify running exe!")
+        .normalize()
+        .expect("Cybercmd cannot find the path of the running exe!")
+        .normalize()
+        .expect("Cybercmd cannot parse the path of the running exe!");
+    exe.parent_unchecked()
+        .unwrap()
+        .parent_unchecked()
+        .unwrap()
+        .parent_unchecked()
+        .unwrap()
+        .normalize_virtually()
+        .unwrap()
 }

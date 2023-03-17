@@ -1,3 +1,5 @@
+# The [args] section is optional. It defines commandline arguments for cyberpunk2077.exe.
+# Known arguments are defined as commented-out examples below.
 [args]
 # unattended = "true"
 # forceRawTweakDB = "true"
@@ -41,10 +43,18 @@
 # state = ?
 # save = "AutoSave-0"
 # forceShutdownAfterSessionLoaded = "true"
-skipStartScreen = "true"
-modded = "true"
+# skipStartScreen = "true"
+# modded = "true"
 
-[[tasks]]
-command = "InvokeScc"
-path = "{game_dir}\\r6\\scripts"
-custom_cache_dir = "{game_dir}\\r6\\cache\\modded"
+# A cybercmd config file can optionally have one or more [[tasks]] sections.
+# These define tasks to be automatically run just before cyberpunk2077.exe
+# For example, the redscript compile scc.exe is run to compile mod scripts.
+# See `examples/task.toml` for more.
+#
+# [[tasks]]
+# command = "InvokeScc"
+# terminate_on_errors = false
+# no_window = true
+# args = ["-compile", "{path}", "-customCacheDir", "{custom_cache_dir}"]
+# path = "{game_dir}\\r6\\scripts"
+# custom_cache_dir = "{game_dir}\\r6\\cache\\modded"
