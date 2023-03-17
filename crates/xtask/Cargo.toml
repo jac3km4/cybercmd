@@ -1,0 +1,17 @@
+[package]
+name = "xtask"
+version = "0.1.0"
+edition = "2021"
+
+# See [workspace.dependencies] in root Cargo.toml
+[dependencies]
+xshell = { workspace = true }
+clap = { workspace = true, features = ["derive", "cargo"] }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+once_cell = { workspace = true }
+reqwest = { workspace = true, features = ["blocking"] }
+zip = { workspace = true }
+zip-extensions = { workspace = true }
+common = { workspace = true }
+normpath = { workspace = true }
