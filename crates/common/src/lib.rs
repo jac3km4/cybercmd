@@ -1,5 +1,6 @@
 pub use normpath::BasePathBuf as PathBuf;
 pub use normpath::PathExt;
+pub use normpath::error::*;
 
 #[macro_export]
 macro_rules! make_path {

@@ -1,4 +1,4 @@
-use std::{env::set_current_dir, fs::File, path::Path};
+use std::{env::set_current_dir, fs, fs::File, path::Path};
 
 use anyhow::Result;
 use reqwest::blocking as reqwest;
@@ -9,10 +9,18 @@ use zip_extensions::write::ZipWriterExtensions;
 use crate::common::config::PATHS;
 
 pub fn dist() -> Result<()> {
-    let sh = Shell::new()?;
+    let global_ini = PATHS.staging_bin.join("global.ini");
+    let version_dll = PATHS.staging_bin.join("version.dll");
 
-    sh.change_dir(&PATHS.staging);
+    println! ("Cleanup staging");
+    fs::remove_dir_all(&PATHS.staging)?;
+    fs::create_dir_all(&PATHS.staging)?;
+    fs::create_dir_all(&PATHS.staging_bin)?;
+    fs::create_dir_all(&PATHS.staging_plugins)?;
+
     set_current_dir(PATHS.staging.as_path())?;
+
+    let sh = Shell::new()?;
 
     cmd!(sh, "cargo build --release").run()?;
 
@@ -26,9 +34,9 @@ pub fn dist() -> Result<()> {
     zip_files(&PATHS.staging, PATHS.release.join("cybercmd.zip"))?;
 
     println!("Downloading global.ini");
-    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini", PATHS.staging_bin.join("global.ini"))?;
+    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini", &global_ini)?;
     println!("Downloading version.dll");
-    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll", PATHS.staging_bin.join("version.dll"))?;
+    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll", &version_dll)?;
 
     println!("Creating: {}", &PATHS.release.join("cybercmd-standalone.zip").as_os_str().to_string_lossy());
     zip_files(
