@@ -10,8 +10,5 @@ clap = { workspace = true, features = ["derive", "cargo"] }
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 once_cell = { workspace = true }
-reqwest = { workspace = true, features = ["blocking"] }
-zip = { workspace = true }
-zip-extensions = { workspace = true }
 common = { workspace = true }
 normpath = { workspace = true }

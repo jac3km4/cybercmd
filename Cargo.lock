@@ -203,7 +203,11 @@ dependencies = [
 name = "common"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "normpath",
+ "reqwest",
+ "zip",
+ "zip-extensions",
 ]
 
 [[package]]
@@ -1462,8 +1466,8 @@ dependencies = [
 name = "test"
 version = "0.1.0"
 dependencies = [
- "cybercmd",
- "log",
+ "widestring",
+ "winapi",
 ]
 
 [[package]]
@@ -1978,11 +1982,8 @@ dependencies = [
  "common",
  "normpath",
  "once_cell",
- "reqwest",
  "thiserror",
  "xshell",
- "zip",
- "zip-extensions",
 ]
 
 [[package]]

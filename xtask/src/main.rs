@@ -4,11 +4,13 @@ use clap::{Parser, Subcommand};
 
 use crate::{dist::dist, scratch::scratch};
 use crate::install::install;
+use crate::test::test;
 
 mod common;
 mod dist;
 mod scratch;
 mod install;
+mod test;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -22,6 +24,7 @@ enum Commands {
     Scratch,
     Dist,
     Install {game_dir: String},
+    Test,
 }
 
 fn main() {
@@ -35,6 +38,7 @@ fn try_main() -> anyhow::Result<()> {
         Commands::Scratch => scratch()?,
         Commands::Dist => dist()?,
         Commands::Install {game_dir} => install(game_dir)?,
+        Commands::Test => test()?,
     }
 
     Ok(())

@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cybercmd = { workspace = true }
-log = { workspace = true }
+winapi = { workspace = true, features = ["winver", "processenv", "winbase"] }
+widestring = { workspace = true }

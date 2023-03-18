@@ -1,10 +1,8 @@
-use std::{env::set_current_dir, fs, fs::File, path::Path};
+use std::{env::set_current_dir, fs};
 
 use anyhow::Result;
-use reqwest::blocking as reqwest;
+use common::{download_file, zip_files};
 use xshell::{cmd, Shell};
-use zip::CompressionMethod;
-use zip_extensions::write::ZipWriterExtensions;
 
 use crate::common::config::PATHS;
 
@@ -12,7 +10,7 @@ pub fn dist() -> Result<()> {
     let global_ini = PATHS.staging_bin.join("global.ini");
     let version_dll = PATHS.staging_bin.join("version.dll");
 
-    println! ("Cleanup staging");
+    println!("Cleanup staging");
     fs::remove_dir_all(&PATHS.staging)?;
     fs::create_dir_all(&PATHS.staging)?;
     fs::create_dir_all(&PATHS.staging_bin)?;
@@ -30,15 +28,29 @@ pub fn dist() -> Result<()> {
         PATHS.staging_plugins.join("cybercmd.asi"),
     )?;
 
-    println!("Creating: {}", &PATHS.release.join("cybercmd.zip").as_os_str().to_string_lossy());
+    println!(
+        "Creating: {}",
+        &PATHS
+            .release
+            .join("cybercmd.zip")
+            .as_os_str()
+            .to_string_lossy()
+    );
     zip_files(&PATHS.staging, PATHS.release.join("cybercmd.zip"))?;
 
     println!("Downloading global.ini");
-    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini", &global_ini)?;
+    download_file(PATHS.global_ini_url, global_ini)?;
     println!("Downloading version.dll");
-    download("https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll", &version_dll)?;
+    download_file(PATHS.version_dll_url, version_dll)?;
 
-    println!("Creating: {}", &PATHS.release.join("cybercmd-standalone.zip").as_os_str().to_string_lossy());
+    println!(
+        "Creating: {}",
+        &PATHS
+            .release
+            .join("cybercmd-standalone.zip")
+            .as_os_str()
+            .to_string_lossy()
+    );
     zip_files(
         &PATHS.staging,
         PATHS.release.join("cybercmd-standalone.zip"),
@@ -46,26 +58,6 @@ pub fn dist() -> Result<()> {
 
     println!();
     println!("Done!");
-
-    Ok(())
-}
-
-fn download<S: Into<String>, P: AsRef<Path>>(source: S, dest: P) -> Result<()> {
-    let mut response = reqwest::get(source.into())?;
-    let mut file = File::create(dest.as_ref())?;
-    let _ = &response.copy_to(&mut file)?;
-    Ok(())
-}
-
-#[allow(deprecated)]
-fn zip_files<P1: AsRef<Path>, P2: AsRef<Path>>(source: P1, destination: P2) -> Result<()> {
-    let mut dest_file = File::create(destination.as_ref())?;
-    let mut zip = zip::ZipWriter::new(&mut dest_file);
-    let options = zip::write::FileOptions::default()
-        .compression_method(CompressionMethod::Deflated)
-        .compression_level(Some(9));
-
-    zip.create_from_directory_with_options(source, options)?;
 
     Ok(())
 }

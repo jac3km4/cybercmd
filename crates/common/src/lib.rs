@@ -1,6 +1,12 @@
 pub use normpath::BasePathBuf as PathBuf;
 pub use normpath::PathExt;
 pub use normpath::error::*;
+use std::path::Path;
+use anyhow::Result;
+use std::fs::File;
+use reqwest::blocking as reqwest;
+use zip::CompressionMethod;
+use zip_extensions::write::ZipWriterExtensions;
 
 #[macro_export]
 macro_rules! make_path {
@@ -30,4 +36,24 @@ macro_rules! make_path {
 
         path
     }}
+}
+
+pub fn download_file<S: Into<String>, P: AsRef<Path>>(source: S, dest: P) -> Result<()> {
+    let mut response = reqwest::get(source.into())?;
+    let mut file = File::create(dest.as_ref())?;
+    let _ = &response.copy_to(&mut file)?;
+    Ok(())
+}
+
+#[allow(deprecated)]
+pub fn zip_files<P1: AsRef<Path>, P2: AsRef<Path>>(source: P1, destination: P2) -> Result<()> {
+    let mut dest_file = File::create(destination.as_ref())?;
+    let mut zip = zip::ZipWriter::new(&mut dest_file);
+    let options = zip::write::FileOptions::default()
+        .compression_method(CompressionMethod::Deflated)
+        .compression_level(Some(9));
+
+    zip.create_from_directory_with_options(source, options)?;
+
+    Ok(())
 }

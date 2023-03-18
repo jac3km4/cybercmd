@@ -27,11 +27,13 @@ reqwest = "0.11"
 zip = "0.6"
 zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag="v0.6.2" }
 normpath = "1"
+winapi = { version = "0.3" }
+widestring = "1"
 
 [dependencies]
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
-winapi = { version = "0.3", features = ["minwindef", "winnt", "libloaderapi"] }
-widestring = "1"
+winapi = { workspace = true, features = ["minwindef", "winnt", "libloaderapi"] }
+widestring = { workspace = true }
 once_cell = { workspace = true }
 microtemplate = "1"
 toml = "0.7"

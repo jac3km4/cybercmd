@@ -22,8 +22,11 @@ pub struct Paths {
     pub dist: PathBuf,
     pub staging: PathBuf,
     pub release: PathBuf,
+    pub debug: PathBuf,
     pub staging_bin: PathBuf,
     pub staging_plugins: PathBuf,
+    pub version_dll_url: &'static str,
+    pub global_ini_url: &'static str,
 }
 
 impl Paths {
@@ -32,6 +35,7 @@ impl Paths {
         let dist = make_path!(&root, "target", "dist");
         let staging = make_path!(&root, "target", "staging");
         let release = make_path!(&root, "target", "release");
+        let debug = make_path!(&root, "target", "debug");
         let staging_bin = make_path!(&staging, "bin", "x64");
         let staging_plugins = make_path!(&staging_bin, "plugins");
 
@@ -40,8 +44,11 @@ impl Paths {
             dist,
             staging,
             release,
+            debug,
             staging_bin,
             staging_plugins,
+            version_dll_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll",
+            global_ini_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini",
         }
     }
 }

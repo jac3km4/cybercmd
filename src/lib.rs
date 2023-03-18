@@ -24,6 +24,7 @@ use winapi::{
 };
 
 use crate::{config::Task, paths::PATHS};
+use crate::util::is_valid_exe;
 
 pub mod config;
 pub mod paths;
@@ -45,9 +46,7 @@ unsafe fn main() -> Result<()> {
 
     GetCommandLineW
         .initialize(target, || {
-            let exe = std::env::current_exe();
-            let stem = exe.as_deref().ok().and_then(Path::file_stem);
-            if matches!(stem, Some(exe) if exe.eq_ignore_ascii_case("Cyberpunk2077")) {
+            if is_valid_exe() {
                 CMD_STR.as_ptr()
             } else {
                 GetCommandLineW.call()
@@ -175,12 +174,8 @@ pub unsafe extern "system" fn DllMain(
     call_reason: DWORD,
     _reserved: LPVOID,
 ) -> BOOL {
-    if call_reason == DLL_PROCESS_ATTACH {
-        let exe = std::env::current_exe();
-        let stem = exe.as_deref().ok().and_then(Path::file_stem);
-        if matches!(stem, Some(exe) if exe.eq_ignore_ascii_case("Cyberpunk2077")) {
-            return main().is_ok() as BOOL;
-        }
+    if call_reason == DLL_PROCESS_ATTACH && is_valid_exe() {
+        return main().is_ok() as BOOL;
     }
     TRUE
 }

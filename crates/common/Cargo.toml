@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 normpath = { workspace = true }
+reqwest = { workspace = true, features = ["blocking"] }
+anyhow = { workspace = true }
+zip = { workspace = true }
+zip-extensions = { workspace = true }
