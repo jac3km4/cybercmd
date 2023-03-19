@@ -1,5 +1,6 @@
 use std::{collections::HashMap, ffi::OsStr, fs};
 
+use common::extensions::*;
 use microtemplate::render;
 use serde::{Deserialize, Deserializer};
 
@@ -47,11 +48,14 @@ pub struct Task {
 }
 
 fn deserialize_render_map<'de, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
-    where
-        D: Deserializer<'de>,
+where
+    D: Deserializer<'de>,
 {
     let hash_map = HashMap::<String, String>::deserialize(deserializer)?;
-    Ok(hash_map.into_iter().map(|(key, value)| (key, render(value.as_str(), ConfigContext {}))).collect())
+    Ok(hash_map
+        .into_iter()
+        .map(|(key, value)| (key, render(value.as_str(), ConfigContext {})))
+        .collect())
 }
 
 impl microtemplate::Context for Task {
@@ -78,13 +82,24 @@ pub fn get_configs() -> anyhow::Result<Vec<ModConfig>> {
     for entry in fs::read_dir(path)? {
         let entry = entry?;
         if entry.path().extension() == Some(OsStr::new("toml")) {
-            log::debug!("Loading: {}", dunce::simplified(&entry.path()).display());
+            log::debug!(
+                "Loading: {}",
+                entry
+                    .path()
+                    .normalize_virtually()?
+                    .as_os_str()
+                    .to_string_lossy()
+            );
             let contents = fs::read_to_string(entry.path())?;
             match toml::from_str::<ModConfig>(&contents) {
                 Ok(config) => configs.push(config),
                 Err(error) => log::error!(
                     "In {} ({}): {}",
-                    dunce::simplified(&entry.path()).display(),
+                    &entry
+                        .path()
+                        .normalize_virtually()?
+                        .as_os_str()
+                        .to_string_lossy(),
                     match error.span() {
                         Some(val) => format!("{:?}", val),
                         None => String::new(),

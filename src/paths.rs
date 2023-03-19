@@ -1,4 +1,4 @@
-use common::{make_path, PathBuf, PathExt};
+use common::{extensions::*, make_path, path::PathsError, PathBuf};
 use once_cell::sync::Lazy;
 
 // // TODO [AndASM]: Learn how to write idiomatic documentation comments
@@ -18,8 +18,8 @@ pub struct Paths {
 pub static PATHS: Lazy<Paths> = Lazy::new(get_paths);
 
 fn get_paths() -> Paths {
-    // // TODO [AndASM]: Can this all be done in the Paths {} literal without cloning game?
-    let game = get_game_path();
+    // TODO [AndASM]: Can this all be done in the Paths {} literal without cloning game?
+    let game = get_game_path().unwrap();
     let logs = make_path!(&game, "r6", "logs");
     let configs = make_path!(&game, "r6", "config", "cybercmd");
     let tools = make_path!(&game, "tools", "cybercmd");
@@ -36,19 +36,14 @@ fn get_paths() -> Paths {
     }
 }
 
-fn get_game_path() -> PathBuf {
-    let exe = std::env::current_exe()
-        .expect("Cybercmd cannot identify running exe!")
-        .normalize()
-        .expect("Cybercmd cannot find the path of the running exe!")
-        .normalize()
-        .expect("Cybercmd cannot parse the path of the running exe!");
-    exe.parent_unchecked()
-        .unwrap()
-        .parent_unchecked()
-        .unwrap()
-        .parent_unchecked()
-        .unwrap()
-        .normalize_virtually()
-        .unwrap()
+fn get_game_path() -> Result<PathBuf, PathsError> {
+    #[rustfmt::skip]
+    let game_path = std::env::current_exe()?
+        .normalize()?
+        .parent()?.ok_or(PathsError::NoParent)? // Cyberpunk2077.exe -> x64
+        .parent()?.ok_or(PathsError::NoParent)? // x64 -> bin
+        .parent()?.ok_or(PathsError::NoParent)? // bin -> Cyberpunk 2077
+        .normalize_virtually()?;
+
+    Ok(game_path)
 }

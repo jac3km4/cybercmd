@@ -6,11 +6,11 @@ use crate::{dist::dist, scratch::scratch};
 use crate::install::install;
 use crate::test::test;
 
-mod common;
 mod dist;
 mod scratch;
 mod install;
 mod test;
+mod config;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

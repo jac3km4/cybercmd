@@ -1,10 +1,10 @@
 use std::{env::set_current_dir, fs};
 
 use anyhow::Result;
-use common::{download_file, zip_files};
 use xshell::{cmd, Shell};
+use common::file::{download_file, zip_files};
 
-use crate::common::config::PATHS;
+use crate::config::PATHS;
 
 pub fn dist() -> Result<()> {
     let global_ini = PATHS.staging_bin.join("global.ini");

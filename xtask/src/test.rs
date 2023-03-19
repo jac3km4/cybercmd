@@ -1,10 +1,10 @@
 use std::{env::set_current_dir, fs};
 
 use anyhow::Result;
-use common::download_file;
+use common::file::download_file;
 use xshell::{cmd, Shell};
 
-use crate::common::config::PATHS;
+use crate::config::PATHS;
 
 pub fn test() -> Result<()> {
     set_current_dir(PATHS.debug.as_path())?;

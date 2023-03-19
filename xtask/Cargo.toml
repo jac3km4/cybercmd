@@ -8,7 +8,6 @@ edition = "2021"
 xshell = { workspace = true }
 clap = { workspace = true, features = ["derive", "cargo"] }
 anyhow = { workspace = true }
-thiserror = { workspace = true }
 once_cell = { workspace = true }
 common = { workspace = true }
 normpath = { workspace = true }

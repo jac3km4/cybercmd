@@ -1,19 +1,7 @@
-use std::io;
-use common::{make_path, PathBuf, ParentError};
+use common::{make_path, ParentError, PathBuf};
 use normpath::BasePathBuf;
 use once_cell::sync::Lazy;
-use thiserror::Error;
-
-#[derive(Error, Debug)]
-pub enum PathsError {
-    #[error("Cannot get project root")]
-    IO {
-        #[from]
-        source: io::Error,
-    },
-    #[error("Cannot get project root as grandparent of CARGO_MANIFEST_DIR")]
-    Parent(#[from] Option<ParentError>),
-}
+use common::path::PathsError;
 
 pub static PATHS: Lazy<Paths> = Lazy::new(Paths::new);
 
@@ -31,7 +19,7 @@ pub struct Paths {
 
 impl Paths {
     fn new() -> Paths {
-        let root = project_root().expect("Could not get project root.");
+        let root = project_root().unwrap();
         let dist = make_path!(&root, "target", "dist");
         let staging = make_path!(&root, "target", "staging");
         let release = make_path!(&root, "target", "release");
@@ -54,9 +42,10 @@ impl Paths {
 }
 
 fn project_root() -> Result<PathBuf, PathsError> {
+    #[rustfmt::skip]
     let root = BasePathBuf::new(env!("CARGO_MANIFEST_DIR"))?
         .normalize()?
-        .parent()?.ok_or(PathsError::Parent(None))?
+        .parent()?.ok_or(PathsError::NoParent)?
         .normalize_virtually()?;
 
     Ok(root)

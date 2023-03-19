@@ -3,7 +3,7 @@ use std::{env::set_current_dir, path::Path};
 use anyhow::Result;
 use xshell::{cmd, Shell};
 
-use crate::common::config::PATHS;
+use crate::config::PATHS;
 
 pub fn install<P: AsRef<Path>>(game_dir: P) -> Result<()> {
     let sh = Shell::new()?;

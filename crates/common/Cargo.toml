@@ -11,3 +11,4 @@ reqwest = { workspace = true, features = ["blocking"] }
 anyhow = { workspace = true }
 zip = { workspace = true }
 zip-extensions = { workspace = true }
+thiserror = { workspace = true }
