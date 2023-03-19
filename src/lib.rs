@@ -1,15 +1,9 @@
 use std::{
-    ffi::CString,
-    fmt::Write,
-    mem,
-    os::windows::process::CommandExt,
-    path::{Path},
-    process::Command,
+    ffi::CString, fmt::Write, mem, os::windows::process::CommandExt, path::Path, process::Command,
 };
 
-use common::PathBuf;
-
 use anyhow::{bail, Result};
+use common::PathBuf;
 use config::{ConfigContext, ModConfig};
 use detour::static_detour;
 use microtemplate::render;
@@ -23,8 +17,7 @@ use winapi::{
     },
 };
 
-use crate::{config::Task, paths::PATHS};
-use crate::util::is_valid_exe;
+use crate::{config::Task, paths::PATHS, util::is_valid_exe};
 
 pub mod config;
 pub mod paths;
@@ -78,7 +71,7 @@ fn get_final_cmd(initial_cmd_ustr: &U16CStr) -> Result<U16CString> {
 
 fn write_mod_cmd<W: Write>(config: &ModConfig, mut writer: W) -> Result<()> {
     for (key, val) in &config.args {
-        let rendered = render(val, ConfigContext{});
+        let rendered = render(val, ConfigContext {});
         write!(writer, " -{key} {rendered:?}")?;
     }
     Ok(())
@@ -128,7 +121,9 @@ fn run_mod_tasks(config: &ModConfig) -> Result<()> {
                 task.command,
                 if let Ok(path) = cmd_path {
                     path.as_os_str().to_string_lossy().to_string()
-                } else {String::new()}
+                } else {
+                    String::new()
+                }
             );
             if task.terminate_on_errors {
                 std::process::exit(0);

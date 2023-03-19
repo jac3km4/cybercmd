@@ -1,20 +1,21 @@
-use common::{make_path, ParentError, PathBuf};
+use common::{make_path, path::PathsError, PathBuf};
 use normpath::BasePathBuf;
 use once_cell::sync::Lazy;
-use common::path::PathsError;
 
 pub static PATHS: Lazy<Paths> = Lazy::new(Paths::new);
 
 pub struct Paths {
-    pub root: PathBuf,
-    pub dist: PathBuf,
-    pub staging: PathBuf,
-    pub release: PathBuf,
     pub debug: PathBuf,
+    pub dist: PathBuf,
+    pub global_ini_url: &'static str,
+    pub installer: PathBuf,
+    pub release: PathBuf,
+    pub root: PathBuf,
+    pub staging: PathBuf,
     pub staging_bin: PathBuf,
     pub staging_plugins: PathBuf,
+    pub staging_fomod: PathBuf,
     pub version_dll_url: &'static str,
-    pub global_ini_url: &'static str,
 }
 
 impl Paths {
@@ -26,6 +27,8 @@ impl Paths {
         let debug = make_path!(&root, "target", "debug");
         let staging_bin = make_path!(&staging, "bin", "x64");
         let staging_plugins = make_path!(&staging_bin, "plugins");
+        let installer = make_path!(&root, "resources", "installer");
+        let staging_fomod = make_path!(&staging, "fomod");
 
         Paths {
             root,
@@ -37,6 +40,8 @@ impl Paths {
             staging_plugins,
             version_dll_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll",
             global_ini_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini",
+            installer,
+            staging_fomod,
         }
     }
 }

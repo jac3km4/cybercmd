@@ -1,8 +1,8 @@
 use std::{env::set_current_dir, fs};
 
 use anyhow::Result;
-use xshell::{cmd, Shell};
 use common::file::{download_file, zip_files};
+use xshell::{cmd, Shell};
 
 use crate::config::PATHS;
 
@@ -26,6 +26,13 @@ pub fn dist() -> Result<()> {
     sh.copy_file(
         PATHS.release.join("cybercmd.dll"),
         PATHS.staging_plugins.join("cybercmd.asi"),
+    )?;
+
+    println!("Adding Vortex install files to fomod/ directory");
+    sh.copy_file(PATHS.installer.join("info.xml"), &PATHS.staging_fomod)?;
+    sh.copy_file(
+        PATHS.installer.join("ModuleConfig.xml"),
+        &PATHS.staging_fomod,
     )?;
 
     println!(

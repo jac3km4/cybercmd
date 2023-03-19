@@ -2,15 +2,13 @@
 
 use clap::{Parser, Subcommand};
 
-use crate::{dist::dist, scratch::scratch};
-use crate::install::install;
-use crate::test::test;
+use crate::{dist::dist, install::install, scratch::scratch, test::test};
 
-mod dist;
-mod scratch;
-mod install;
-mod test;
 mod config;
+mod dist;
+mod install;
+mod scratch;
+mod test;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -23,7 +21,7 @@ struct Cli {
 enum Commands {
     Scratch,
     Dist,
-    Install {game_dir: String},
+    Install { game_dir: String },
     Test,
 }
 
@@ -37,7 +35,7 @@ fn try_main() -> anyhow::Result<()> {
     match &cli.command {
         Commands::Scratch => scratch()?,
         Commands::Dist => dist()?,
-        Commands::Install {game_dir} => install(game_dir)?,
+        Commands::Install { game_dir } => install(game_dir)?,
         Commands::Test => test()?,
     }
 
