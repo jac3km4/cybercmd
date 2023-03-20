@@ -1,11 +1,6 @@
 use common::{extensions::*, make_path, path::PathsError, PathBuf};
 use once_cell::sync::Lazy;
 
-// // TODO [AndASM]: Learn how to write idiomatic documentation comments
-/*
-   In this module: Lazily initialize a singleton with all our paths pre-computed.
-*/
-
 pub struct Paths {
     pub game: PathBuf,
     pub logs: PathBuf,
@@ -18,7 +13,6 @@ pub struct Paths {
 pub static PATHS: Lazy<Paths> = Lazy::new(get_paths);
 
 fn get_paths() -> Paths {
-    // TODO [AndASM]: Can this all be done in the Paths {} literal without cloning game?
     let game = get_game_path().unwrap();
     let logs = make_path!(&game, "r6", "logs");
     let configs = make_path!(&game, "r6", "config", "cybercmd");

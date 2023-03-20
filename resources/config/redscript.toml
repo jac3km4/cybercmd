@@ -1,0 +1,10 @@
+# This is updated to work with cybercmd's new args features. Since the version distributed with redscript in scc.toml
+# may be out of date.
+
+[[tasks]]
+command = "InvokeScc"
+terminate_on_errors = false
+no_window = true
+args = ["-compile", "{path}", "-customCacheDir", "{custom_cache_dir}"]
+path = "{game_dir}/r6/scripts"
+custom_cache_dir = "{game_dir}/r6/cache/modded"

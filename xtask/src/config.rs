@@ -5,6 +5,7 @@ use once_cell::sync::Lazy;
 pub static PATHS: Lazy<Paths> = Lazy::new(Paths::new);
 
 pub struct Paths {
+    pub config: PathBuf,
     pub debug: PathBuf,
     pub dist: PathBuf,
     pub global_ini_url: &'static str,
@@ -13,6 +14,7 @@ pub struct Paths {
     pub root: PathBuf,
     pub staging: PathBuf,
     pub staging_bin: PathBuf,
+    pub staging_config: PathBuf,
     pub staging_plugins: PathBuf,
     pub staging_fomod: PathBuf,
     pub version_dll_url: &'static str,
@@ -28,7 +30,9 @@ impl Paths {
         let staging_bin = make_path!(&staging, "bin", "x64");
         let staging_plugins = make_path!(&staging_bin, "plugins");
         let installer = make_path!(&root, "resources", "installer");
+        let config = make_path!(&root, "resources", "config");
         let staging_fomod = make_path!(&staging, "fomod");
+        let staging_config = make_path!(&staging, "r6", "config", "cybercmd");
 
         Paths {
             root,
@@ -37,11 +41,13 @@ impl Paths {
             release,
             debug,
             staging_bin,
+            staging_config,
+            staging_fomod,
             staging_plugins,
             version_dll_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/version.dll",
             global_ini_url: "https://raw.githubusercontent.com/yamashi/CyberEngineTweaks/master/vendor/asiloader/global.ini",
             installer,
-            staging_fomod,
+            config,
         }
     }
 }

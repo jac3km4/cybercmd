@@ -11,3 +11,4 @@ anyhow = { workspace = true }
 once_cell = { workspace = true }
 common = { workspace = true }
 normpath = { workspace = true }
+uniquote = { workspace = true }

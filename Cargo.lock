@@ -327,7 +327,9 @@ dependencies = [
  "microtemplate",
  "once_cell",
  "serde",
+ "thiserror",
  "toml",
+ "uniquote",
  "widestring",
  "winapi",
 ]
@@ -940,6 +942,7 @@ version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "972dec05f98e7c787ede35d7a9ea4735eb7788c299287352757b3def6cc1f7b5"
 dependencies = [
+ "uniquote",
  "windows-sys 0.45.0",
 ]
 
@@ -1687,6 +1690,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c0edd1e5b14653f783770bce4a4dabb4a5108a5370a5f5d8cfe8710c361f6c8b"
 
 [[package]]
+name = "uniquote"
+version = "3.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54a900eeb2aef304818fb781cf422a42c2f67f760c25927ccc83edc6b0fdfd0c"
+
+[[package]]
 name = "unsafe-any-ors"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1976,6 +1985,7 @@ dependencies = [
  "common",
  "normpath",
  "once_cell",
+ "uniquote",
  "xshell",
 ]
 

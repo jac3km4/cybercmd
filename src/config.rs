@@ -3,11 +3,12 @@ use std::{collections::HashMap, ffi::OsStr, fs};
 use common::extensions::*;
 use microtemplate::render;
 use serde::{Deserialize, Deserializer};
+use uniquote::Quote;
 
 use crate::paths::PATHS;
 
 #[derive(Clone, Default, Debug)]
-pub struct ConfigContext {}
+pub struct ConfigContext;
 
 impl microtemplate::Context for ConfigContext {
     fn get_field(&self, field_name: &str) -> &str {
@@ -81,25 +82,15 @@ pub fn get_configs() -> anyhow::Result<Vec<ModConfig>> {
 
     for entry in fs::read_dir(path)? {
         let entry = entry?;
+
         if entry.path().extension() == Some(OsStr::new("toml")) {
-            log::debug!(
-                "Loading: {}",
-                entry
-                    .path()
-                    .normalize_virtually()?
-                    .as_os_str()
-                    .to_string_lossy()
-            );
+            log::debug!("Loading: {}", entry.path().normalize_virtually()?.quote());
             let contents = fs::read_to_string(entry.path())?;
             match toml::from_str::<ModConfig>(&contents) {
                 Ok(config) => configs.push(config),
                 Err(error) => log::error!(
                     "In {} ({}): {}",
-                    &entry
-                        .path()
-                        .normalize_virtually()?
-                        .as_os_str()
-                        .to_string_lossy(),
+                    &entry.path().normalize_virtually()?.quote(),
                     match error.span() {
                         Some(val) => format!("{:?}", val),
                         None => String::new(),

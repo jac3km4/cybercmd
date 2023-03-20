@@ -2,6 +2,7 @@ use std::{env::set_current_dir, fs};
 
 use anyhow::Result;
 use common::file::{download_file, zip_files};
+use uniquote::Quote;
 use xshell::{cmd, Shell};
 
 use crate::config::PATHS;
@@ -15,11 +16,14 @@ pub fn dist() -> Result<()> {
     fs::create_dir_all(&PATHS.staging)?;
     fs::create_dir_all(&PATHS.staging_bin)?;
     fs::create_dir_all(&PATHS.staging_plugins)?;
+    fs::create_dir_all(&PATHS.staging_config)?;
+    fs::create_dir_all(&PATHS.staging_fomod)?;
 
     set_current_dir(PATHS.staging.as_path())?;
 
     let sh = Shell::new()?;
 
+    println!("Building cybercmd.");
     cmd!(sh, "cargo build --release").run()?;
 
     println!("Copying cybercmd.asi");
@@ -35,14 +39,12 @@ pub fn dist() -> Result<()> {
         &PATHS.staging_fomod,
     )?;
 
-    println!(
-        "Creating: {}",
-        &PATHS
-            .release
-            .join("cybercmd.zip")
-            .as_os_str()
-            .to_string_lossy()
-    );
+    println!("Adding config files (redscript)");
+    for path in fs::read_dir(&PATHS.config)? {
+        sh.copy_file(path?.path(), &PATHS.staging_config)?;
+    }
+
+    println!("Creating: {}", &PATHS.release.join("cybercmd.zip").quote());
     zip_files(&PATHS.staging, PATHS.release.join("cybercmd.zip"))?;
 
     println!("Downloading global.ini");
@@ -52,11 +54,7 @@ pub fn dist() -> Result<()> {
 
     println!(
         "Creating: {}",
-        &PATHS
-            .release
-            .join("cybercmd-standalone.zip")
-            .as_os_str()
-            .to_string_lossy()
+        &PATHS.release.join("cybercmd-standalone.zip").quote()
     );
     zip_files(
         &PATHS.staging,

@@ -25,10 +25,11 @@ xshell = "0.2"
 clap = { version = "4", features = ["cargo"] }
 reqwest = "0.11"
 zip = "0.6"
-zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag="v0.6.2" }
+zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag = "v0.6.2" }
 normpath = "1"
 winapi = { version = "0.3" }
 widestring = "1"
+uniquote = "3.3.0"
 
 [dependencies]
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
@@ -43,6 +44,8 @@ log = { workspace = true }
 chrono = "0.4.24"
 log4rs = "1.2.0"
 common = { workspace = true }
+thiserror = { workspace = true }
+uniquote = { workspace = true }
 
 [profile.release]
 lto = true
