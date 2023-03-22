@@ -3,8 +3,6 @@ use std::{
 };
 
 use anyhow::{bail, Result};
-use common::PathBuf;
-use config::{ConfigContext, ModConfig};
 use detour::static_detour;
 use microtemplate::render;
 use once_cell::sync::Lazy;
@@ -16,6 +14,9 @@ use winapi::{
         winnt::{DLL_PROCESS_ATTACH, LPCWSTR},
     },
 };
+
+use common::path::PathBuf;
+use config::{ConfigContext, ModConfig};
 
 use crate::{config::Task, paths::PATHS, util::is_valid_exe};
 

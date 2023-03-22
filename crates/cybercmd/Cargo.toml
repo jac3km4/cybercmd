@@ -3,24 +3,27 @@ cargo-features = ["per-package-target"]
 [package]
 name = "cybercmd"
 version = "0.0.7"
-edition = "2021"
-forced-target = "x86_64-pc-windows-msvc"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
 
 [lib]
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-detour = { workspace = true }
-winapi = { workspace = true, features = ["minwindef", "winnt", "libloaderapi"] }
-widestring = { workspace = true }
-once_cell = { workspace = true }
-microtemplate = { workspace = true }
-toml = { workspace = true }
-serde = { workspace = true }
 anyhow = { workspace = true }
-log = { workspace = true }
 chrono = { workspace = true }
-log4rs = { workspace = true }
 common = { workspace = true }
+detour = { workspace = true }
+log = { workspace = true }
+log4rs = { workspace = true }
+microtemplate = { workspace = true }
+once_cell = { workspace = true }
+serde = { workspace = true }
 thiserror = { workspace = true }
+toml = { workspace = true }
 uniquote = { workspace = true }
+widestring = { workspace = true }
+winapi = { workspace = true, features = ["minwindef", "winnt", "libloaderapi"] }

@@ -1,4 +1,8 @@
-use common::{extensions::*, make_path, path::PathsError, PathBuf};
+use common::{
+    extensions::*,
+    make_path,
+    path::{PathBuf, PathsError},
+};
 use once_cell::sync::Lazy;
 
 pub struct Paths {
@@ -34,9 +38,7 @@ fn get_game_path() -> Result<PathBuf, PathsError> {
     #[rustfmt::skip]
     let game_path = std::env::current_exe()?
         .normalize()?
-        .parent()?.ok_or(PathsError::NoParent)? // Cyberpunk2077.exe -> x64
-        .parent()?.ok_or(PathsError::NoParent)? // x64 -> bin
-        .parent()?.ok_or(PathsError::NoParent)? // bin -> Cyberpunk 2077
+        .ancestors().nth(3).ok_or(PathsError::NoParent)?
         .normalize_virtually()?;
 
     Ok(game_path)

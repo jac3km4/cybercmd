@@ -1,5 +1,5 @@
 [args]
-a=true
+a = true
 # unattended = "true"
 # forceRawTweakDB = "true"
 # profiler = "true"

@@ -1,18 +1,18 @@
 use std::path::Path;
 
 use anyhow::Result;
-use log::LevelFilter;
 use log4rs::{
     append::rolling_file::{
         policy::compound::{
-            roll::fixed_window::FixedWindowRoller, trigger::size::SizeTrigger, CompoundPolicy,
+            CompoundPolicy, roll::fixed_window::FixedWindowRoller, trigger::size::SizeTrigger,
         },
         RollingFileAppender,
     },
     config::{Appender, Root},
-    encode::pattern::PatternEncoder,
     Config,
+    encode::pattern::PatternEncoder,
 };
+use log::LevelFilter;
 
 use crate::paths::PATHS;
 

@@ -201,7 +201,7 @@ dependencies = [
 
 [[package]]
 name = "common"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "anyhow",
  "normpath",
@@ -1461,7 +1461,7 @@ dependencies = [
 
 [[package]]
 name = "test"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "widestring",
  "winapi",
@@ -1978,7 +1978,7 @@ checksum = "1dbabb1cbd15a1d6d12d9ed6b35cc6777d4af87ab3ba155ea37215f20beab80c"
 
 [[package]]
 name = "xtask"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "anyhow",
  "clap",

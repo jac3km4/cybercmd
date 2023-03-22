@@ -1,14 +1,17 @@
 [package]
 name = "xtask"
-version = "0.1.0"
-edition = "2021"
+version = "0.0.0"
 
-# See [workspace.dependencies] in root Cargo.toml
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
 [dependencies]
-xshell = { workspace = true }
-clap = { workspace = true, features = ["derive", "cargo"] }
 anyhow = { workspace = true }
-once_cell = { workspace = true }
+clap = { workspace = true, features = ["derive", "cargo"] }
 common = { workspace = true }
 normpath = { workspace = true }
+once_cell = { workspace = true }
 uniquote = { workspace = true }
+xshell = { workspace = true }

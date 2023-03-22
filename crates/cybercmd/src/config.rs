@@ -1,9 +1,10 @@
 use std::{collections::HashMap, ffi::OsStr, fs};
 
-use common::extensions::*;
 use microtemplate::render;
 use serde::{Deserialize, Deserializer};
 use uniquote::Quote;
+
+use common::extensions::*;
 
 use crate::paths::PATHS;
 
