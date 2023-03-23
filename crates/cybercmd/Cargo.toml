@@ -16,6 +16,7 @@ crate-type = ["rlib", "cdylib"]
 anyhow = { workspace = true }
 chrono = { workspace = true }
 common = { workspace = true }
+derive_more = { workspace = true }
 detour = { workspace = true }
 log = { workspace = true }
 log4rs = { workspace = true }

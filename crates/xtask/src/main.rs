@@ -2,7 +2,7 @@
 
 use clap::{Parser, Subcommand};
 
-use crate::{dist::dist, install::install, scratch::scratch, test::test};
+use crate::{config::Config, dist::dist, install::install, scratch::scratch, test::test};
 
 mod config;
 mod dist;
@@ -31,12 +31,13 @@ fn main() {
 
 fn try_main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+    let config = Config::new();
 
     match &cli.command {
-        Commands::Scratch => scratch()?,
-        Commands::Dist => dist()?,
-        Commands::Install { game_dir } => install(game_dir)?,
-        Commands::Test => test()?,
+        Commands::Scratch => scratch(&config)?,
+        Commands::Dist => dist(&config)?,
+        Commands::Install { game_dir } => install(&config, game_dir)?,
+        Commands::Test => test(&config)?,
     }
 
     Ok(())

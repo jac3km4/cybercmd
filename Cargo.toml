@@ -17,6 +17,7 @@ xtask = { path = "crates/xtask", version = "0.0.0" }
 anyhow = "1"
 chrono = "0.4.24"
 clap = { version = "4", features = ["cargo"] }
+derive_more = "0.99"
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
 log = "0.4"
 log4rs = "1.2.0"

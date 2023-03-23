@@ -1,5 +1,4 @@
-use std::fs::create_dir_all;
-use std::io;
+use std::{fs::create_dir_all, io};
 
 use normpath::BasePathBuf;
 pub use normpath::{error::*, BasePath as Path, BasePathBuf as PathBuf};

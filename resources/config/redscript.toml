@@ -5,6 +5,6 @@
 command = "InvokeScc"
 terminate_on_errors = false
 no_window = true
-args = ["-compile", "{path}", "-customCacheDir", "{custom_cache_dir}"]
-path = "{game_dir}/r6/scripts"
-custom_cache_dir = "{game_dir}/r6/cache/modded"
+template_args = ["-compile", "{path}", "-customCacheDir", "{custom_cache_dir}"]
+substitutions.path = "{game_dir}/r6/scripts"
+substitutions.custom_cache_dir = "{game_dir}/r6/cache/modded"

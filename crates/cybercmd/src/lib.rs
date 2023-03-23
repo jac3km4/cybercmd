@@ -3,6 +3,8 @@ use std::{
 };
 
 use anyhow::{bail, Result};
+use common::path::PathBuf;
+pub use config::AppContext;
 use detour::static_detour;
 use microtemplate::render;
 use once_cell::sync::Lazy;
@@ -15,14 +17,13 @@ use winapi::{
     },
 };
 
-use common::path::PathBuf;
-use config::{ConfigContext, ModConfig};
-
-use crate::{config::Task, paths::PATHS, util::is_valid_exe};
+use crate::{
+    config::{ArgumentContext, GameConfig, Task},
+    util::is_valid_exe,
+};
 
 pub mod config;
-pub mod paths;
-pub mod util;
+mod util;
 
 static_detour! {
   static GetCommandLineW: unsafe extern "system" fn() -> LPCWSTR;
@@ -33,7 +34,6 @@ type FnGetCommandLineW = unsafe extern "system" fn() -> LPCWSTR;
 static CMD_STR: Lazy<U16CString> = Lazy::new(try_get_final_cmd);
 
 unsafe fn main() -> Result<()> {
-    let _ = util::setup_logging();
     let address = get_module_symbol_address("kernel32.dll", "GetCommandLineW")
         .expect("could not find 'GetCommandLineW' address");
     let target: FnGetCommandLineW = mem::transmute(address);
@@ -51,51 +51,56 @@ unsafe fn main() -> Result<()> {
 }
 
 fn try_get_final_cmd() -> U16CString {
+    let context = AppContext::new().expect("Could not load cybercmd");
+
     log::debug!("try_get_final_cmd");
     let initial_cmd_ustr = unsafe { U16CStr::from_ptr_str(GetCommandLineW.call()) };
-    match get_final_cmd(initial_cmd_ustr) {
+    match get_final_cmd(&context, initial_cmd_ustr) {
         Ok(res) => res,
         Err(_) => initial_cmd_ustr.to_owned(),
     }
 }
 
-fn get_final_cmd(initial_cmd_ustr: &U16CStr) -> Result<U16CString> {
+fn get_final_cmd(context: &AppContext, initial_cmd_ustr: &U16CStr) -> Result<U16CString> {
     log::debug!("get_final_cmd");
     let mut cmd = initial_cmd_ustr.to_string()?;
 
-    for config in config::get_configs()? {
-        write_mod_cmd(&config, &mut cmd)?;
-        run_mod_tasks(&config)?;
+    for mod_config in &context.game_configs {
+        write_mod_cmd(context, mod_config, &mut cmd)?;
+        run_mod_tasks(context, mod_config)?;
     }
     Ok(U16CString::from_str(cmd)?)
 }
 
-fn write_mod_cmd<W: Write>(config: &ModConfig, mut writer: W) -> Result<()> {
+fn write_mod_cmd<W: Write>(context: &AppContext, config: &GameConfig, mut writer: W) -> Result<()> {
     for (key, val) in &config.args {
-        let rendered = render(val, ConfigContext {});
+        let rendered = render(val, context.argument_context.clone());
         write!(writer, " -{key} {rendered:?}")?;
     }
     Ok(())
 }
 
-fn run_mod_tasks(config: &ModConfig) -> Result<()> {
+fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
     const NO_WINDOW_FLAGS: u32 = 0x08000000;
 
     for task in &config.tasks {
         log::debug!("Running task: \"{}\"", task.command);
 
-        let cmd_path = get_command_path(task);
+        let cmd_path = get_command_path(context, task);
+        let arg_context = ArgumentContext::from(context, &task.substitutions);
 
-        let args = task
-            .args
-            .iter()
-            .map(|arg| render(arg.as_str(), task.clone()));
+        let args = task.template_args.iter().map(|arg| {
+            render(
+                arg.as_str(),
+                arg_context.clone(),
+            )
+        });
 
         if let Ok(cmd) = cmd_path {
-            if cmd.starts_with(&PATHS.tools) || task.command == "InvokeScc" {
+            if cmd.starts_with(&context.paths.tools) || task.command == "InvokeScc" {
                 let res = {
                     let mut command: Command = Command::new(&cmd);
-                    command.args(args).current_dir(&PATHS.game);
+                    command.args(args).current_dir(&context.paths.game);
                     if task.no_window {
                         command.creation_flags(NO_WINDOW_FLAGS);
                     }
@@ -134,12 +139,12 @@ fn run_mod_tasks(config: &ModConfig) -> Result<()> {
     Ok(())
 }
 
-fn get_command_path(task: &Task) -> Result<PathBuf> {
+fn get_command_path(context: &AppContext, task: &Task) -> Result<PathBuf> {
     let result = if task.command == "InvokeScc" {
-        PATHS.scc.to_owned()
+        context.paths.scc.to_owned()
     } else {
         let cmd_with_exe = format!("{}.exe", task.command);
-        PATHS.tools.join(
+        context.paths.tools.join(
             if let Some(file_name) = Path::new(&cmd_with_exe).file_name() {
                 file_name
             } else {
@@ -147,7 +152,7 @@ fn get_command_path(task: &Task) -> Result<PathBuf> {
             },
         )
     }
-    .canonicalize()?;
+    .normalize()?;
 
     Ok(result)
 }

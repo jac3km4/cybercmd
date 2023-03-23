@@ -7,12 +7,11 @@ pub fn main() {
     // We use get_file_version_info to create a dependency on version.dll so that the asi loader gets loaded.
     get_file_version_info();
 
+    println!();
     println!("Cybercmd test app.");
     println!();
-    println!("By itself, this app does nothing but print this text.");
-    println!("It is an empty placeholder for the asi loader and cybercmd for testing.");
-
-    println!("Call GetCommandLineW, got: {}", get_command_line());
+    println!("Call GetCommandLineW, got:");
+    println!("$ {}", get_command_line());
 
     sleep(std::time::Duration::from_millis(200));
 }
