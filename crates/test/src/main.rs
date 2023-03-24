@@ -9,6 +9,8 @@ pub fn main() {
 
     println!();
     println!("Cybercmd test app.");
+    println!("exe: {:?}", std::env::current_exe().unwrap_or_default());
+    println!("cwd: {:?}", std::env::current_dir().unwrap_or_default());
     println!();
     println!("Call GetCommandLineW, got:");
     println!("$ {}", get_command_line());

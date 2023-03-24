@@ -25,7 +25,10 @@ impl GameConfigList {
                 log::debug!("Loading: {}", entry.path().normalize_virtually()?.quote());
                 let contents = fs::read_to_string(entry.path())?;
                 match toml::from_str::<GameConfig>(&contents) {
-                    Ok(mod_config) => game_configs.push(mod_config),
+                    Ok(mut mod_config) => {
+                        mod_config.file_name = entry.path().display().to_string();
+                        game_configs.push(mod_config);
+                    }
                     Err(error) => log::error!(
                         "In {} ({}): {}",
                         &entry.path().normalize_virtually()?.quote(),
@@ -44,6 +47,8 @@ impl GameConfigList {
 
 #[derive(Debug, Deserialize)]
 pub struct GameConfig {
+    #[serde(skip)]
+    pub(crate) file_name: String,
     #[serde(default)]
     pub(crate) args: HashMap<String, String>,
     #[serde(default)]

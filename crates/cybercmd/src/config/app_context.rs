@@ -2,10 +2,11 @@ use common::{
     extensions::*,
     make_path,
     path::{PathBuf, PathsError},
+    setup_logger,
 };
 use log::info;
 
-use super::{setup_logging, ArgumentContext, GameConfigList};
+use super::{ArgumentContext, GameConfigList};
 
 pub struct Paths {
     pub game: PathBuf,
@@ -41,10 +42,11 @@ impl Paths {
     }
 
     fn get_game_path() -> Result<PathBuf, PathsError> {
-        #[rustfmt::skip]
-            let game_path = std::env::current_exe()?
+        let game_path = std::env::current_exe()?
             .normalize()?
-            .ancestors().nth(3).ok_or(PathsError::NoParent)?
+            .ancestors()
+            .nth(3)
+            .ok_or(PathsError::NoParent)?
             .normalize_virtually()?;
 
         Ok(game_path)
@@ -54,8 +56,8 @@ impl Paths {
 impl AppContext {
     pub fn new() -> anyhow::Result<AppContext> {
         let paths = Paths::new();
-        Self::setup_logging(&paths)?;
-        info!("== Loading Cybercmd ==");
+        setup_logger(&paths.logs)?;
+        info!("Loading Cybercmd");
 
         let app_context = AppContext {
             game_configs: GameConfigList::new(&paths)?,
@@ -63,9 +65,5 @@ impl AppContext {
             paths,
         };
         Ok(app_context)
-    }
-
-    pub fn setup_logging(paths: &Paths) -> anyhow::Result<()> {
-        setup_logging(paths)
     }
 }

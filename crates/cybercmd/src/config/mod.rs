@@ -3,9 +3,8 @@ pub use self::{
     argument_context::ArgumentContext,
     game_config::{GameConfig, Task},
 };
-pub(self) use self::{app_context::Paths, game_config::GameConfigList, logging::setup_logging};
+pub(self) use self::{app_context::Paths, game_config::GameConfigList};
 
 mod app_context;
 mod argument_context;
 mod game_config;
-mod logging;

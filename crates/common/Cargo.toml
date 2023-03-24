@@ -9,6 +9,7 @@ rust-version.workspace = true
 
 [dependencies]
 anyhow = { workspace = true }
+flexi_logger = { workspace = true }
 normpath = { workspace = true, features = ["uniquote"] }
 reqwest = { workspace = true, features = ["blocking"] }
 thiserror = { workspace = true }

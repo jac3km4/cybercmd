@@ -8,6 +8,7 @@ mod config;
 mod dist;
 mod install;
 mod scratch;
+mod stage;
 mod test;
 
 #[derive(Parser)]
@@ -26,7 +27,7 @@ enum Commands {
 }
 
 fn main() {
-    try_main().expect("Unhandled error")
+    try_main().expect("Unhandled error");
 }
 
 fn try_main() -> anyhow::Result<()> {

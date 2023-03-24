@@ -1,5 +1,3 @@
-cargo-features = ["per-package-target"]
-
 [workspace]
 members = ["crates/cybercmd", "crates/xtask", "crates/test", "crates/common"]
 
@@ -19,8 +17,8 @@ chrono = "0.4.24"
 clap = { version = "4", features = ["cargo"] }
 derive_more = "0.99"
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
+flexi_logger = "0.25"
 log = "0.4"
-log4rs = "1.2.0"
 microtemplate = "1"
 normpath = "1"
 once_cell = "1"
@@ -38,3 +36,5 @@ zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag 
 [profile.release]
 lto = true
 strip = true
+codegen-units = 1
+panic = "abort"

@@ -15,6 +15,8 @@ pub enum PathsError {
     Parent(#[from] ParentError),
     #[error("Cannot get project root, parent missing")]
     NoParent,
+    #[error("No common root path")]
+    NoCommonRoot,
 }
 
 #[doc(hidden)]
@@ -30,9 +32,9 @@ pub fn _internal_make_path(path: &mut BasePathBuf) {
     // Automatically create directories to avoid errors and improve discoverability
     // Don't try to create a directory named scc.exe
     if path.extension().is_none() {
-        let _ = create_dir_all(&path);
+        drop(create_dir_all(&path));
     } else if let Ok(Some(parent)) = path.parent() {
-        let _ = create_dir_all(parent);
+        drop(create_dir_all(parent));
     }
 }
 

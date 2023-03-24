@@ -38,15 +38,17 @@ unsafe fn main() -> Result<()> {
         .expect("could not find 'GetCommandLineW' address");
     let target: FnGetCommandLineW = mem::transmute(address);
 
-    GetCommandLineW
-        .initialize(target, || {
-            if is_valid_exe() {
-                CMD_STR.as_ptr()
-            } else {
-                GetCommandLineW.call()
-            }
-        })?
-        .enable()?;
+    GetCommandLineW.initialize(target, || {
+        if is_valid_exe() {
+            CMD_STR.as_ptr()
+        } else {
+            GetCommandLineW.call()
+        }
+    })?;
+
+    Lazy::force(&CMD_STR); // Run it before our hook, just in case.
+
+    GetCommandLineW.enable()?;
     Ok(())
 }
 
@@ -81,7 +83,7 @@ fn write_mod_cmd<W: Write>(context: &AppContext, config: &GameConfig, mut writer
 }
 
 fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
-    const NO_WINDOW_FLAGS: u32 = 0x08000000;
+    const NO_WINDOW_FLAGS: u32 = 0x0800_0000;
 
     for task in &config.tasks {
         log::debug!("Running task: \"{}\"", task.command);
@@ -89,12 +91,10 @@ fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
         let cmd_path = get_command_path(context, task);
         let arg_context = ArgumentContext::from(context, &task.substitutions);
 
-        let args = task.template_args.iter().map(|arg| {
-            render(
-                arg.as_str(),
-                arg_context.clone(),
-            )
-        });
+        let args = task
+            .template_args
+            .iter()
+            .map(|arg| render(arg.as_str(), arg_context.clone()));
 
         if let Ok(cmd) = cmd_path {
             if cmd.starts_with(&context.paths.tools) || task.command == "InvokeScc" {
@@ -123,8 +123,9 @@ fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
             }
         } else {
             log::error!(
-                "Task \"{}\" not found. ({:?})",
+                "Task \"{}\" from {} not found. ({:?})",
                 task.command,
+                config.file_name,
                 if let Ok(path) = cmd_path {
                     path.as_os_str().to_string_lossy().to_string()
                 } else {
@@ -140,19 +141,22 @@ fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
 }
 
 fn get_command_path(context: &AppContext, task: &Task) -> Result<PathBuf> {
-    let result = if task.command == "InvokeScc" {
-        context.paths.scc.to_owned()
-    } else {
-        let cmd_with_exe = format!("{}.exe", task.command);
-        context.paths.tools.join(
+    if task.command == "InvokeScc" {
+        return Ok(context.paths.scc.normalize()?);
+    }
+    let cmd_with_exe = format!("{}.exe", task.command);
+
+    let result = context
+        .paths
+        .tools
+        .join(
             if let Some(file_name) = Path::new(&cmd_with_exe).file_name() {
                 file_name
             } else {
                 bail!("Cannot parse command");
             },
         )
-    }
-    .normalize()?;
+        .normalize()?;
 
     Ok(result)
 }

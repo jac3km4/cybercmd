@@ -5,9 +5,9 @@ Command-line argument loader for Cyberpunk 2077.
 ### usage
 
 - if you use CET:
-  - download and extract [cybercmd.zip from the latest release release](https://github.com/jac3km4/cybercmd/releases) into the main game directory
+  - download and extract [cybercmd.zip from the latest release](https://github.com/jac3km4/cybercmd/releases) into the main game directory
 - if you don't use CET:
-  - download and extract [cybercmd-standalone.zip from the latest release release](https://github.com/jac3km4/cybercmd/releases) into the main game directory
+  - download and extract [cybercmd-standalone.zip from the latest release](https://github.com/jac3km4/cybercmd/releases) into the main game directory
     - if prompted, do not overwrite any files except for `cybercmd.asi`
 
 ### usage from mods
