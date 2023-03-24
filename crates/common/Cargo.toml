@@ -1,0 +1,17 @@
+[package]
+name = "common"
+version = "0.0.0"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+flexi_logger = { workspace = true }
+normpath = { workspace = true, features = ["uniquote"] }
+reqwest = { workspace = true, features = ["blocking"] }
+thiserror = { workspace = true }
+zip = { workspace = true }
+zip-extensions = { workspace = true }

@@ -1,0 +1,19 @@
+## Tasks instructions for mod authors ##
+# - Paths are all relative to the Cyberpunk 2077 directory.
+# - "\" does not work, and must be written as "/" or "/"
+# - Only certain paths are whitelisted.
+#   - Commands must be in the "Cyberpunk 2077/tools/cybercmd" directory
+#   - `command = "new_tool"` would translate to "tools/cubercmd/new_tool.exe"
+#   - There is a special exception for scc.exe
+# - Built-in keys
+#   - command, args, terminate_on_errors, no_window
+# - All other keys are made available as "{replacements}" for args.
+# - Keys other than args can only use the pre=defined "{game_dir}" replacement.
+
+[[tasks]]
+command = "InvokeScc"
+terminate_on_errors = false
+no_window = true
+template_args = ["-compile", "{path}", "-customCacheDir", "{custom_cache_dir}"]
+substitutions.path = "{game_dir}/r6/scripts"
+substitutions.custom_cache_dir = "{game_dir}/r6/cache/modded"

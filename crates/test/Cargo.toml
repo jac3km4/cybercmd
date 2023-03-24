@@ -1,0 +1,12 @@
+[package]
+name = "test"
+version = "0.0.0"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+widestring = { workspace = true }
+winapi = { workspace = true, features = ["winver", "processenv", "winbase"] }

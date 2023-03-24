@@ -1,1 +1,7 @@
 /target
+/r6
+/engine
+/tools
+/bin
+.idea
+*.zip

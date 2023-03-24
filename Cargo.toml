@@ -1,21 +1,40 @@
-[package]
-name = "cybercmd"
-version = "0.0.7"
+[workspace]
+members = ["crates/cybercmd", "crates/xtask", "crates/test", "crates/common"]
+
+[workspace.package]
+rust-version = "1.70"
 edition = "2021"
+license = "MIT"
+authors = ["jac3km4", "AndASM"]
 
-[lib]
-crate-type = ["rlib", "cdylib"]
+[workspace.dependencies]
+common = { path = "crates/common", version = "0.0.0" }
+test = { path = "crates/test", version = "0.0.0" }
+xtask = { path = "crates/xtask", version = "0.0.0" }
 
-[dependencies]
-detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
-winapi = { version = "0.3", features = ["minwindef", "winnt", "libloaderapi"] }
-widestring = "1"
-once_cell = "1"
-microtemplate = "1"
-toml = "0.7"
-serde = { version = "1", features = ["derive"] }
 anyhow = "1"
+chrono = "0.4.24"
+clap = { version = "4", features = ["cargo"] }
+derive_more = "0.99"
+detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
+flexi_logger = "0.25"
+log = "0.4"
+microtemplate = "1"
+normpath = "1"
+once_cell = "1"
+reqwest = "0.11"
+serde = { version = "1", features = ["derive"] }
+thiserror = "1"
+toml = "0.7"
+uniquote = "3.3.0"
+widestring = "1"
+winapi = { version = "0.3" }
+xshell = "0.2"
+zip = "0.6"
+zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag = "v0.6.2" }
 
 [profile.release]
 lto = true
 strip = true
+codegen-units = 1
+panic = "abort"

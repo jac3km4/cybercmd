@@ -1,0 +1,17 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive", "cargo"] }
+common = { workspace = true }
+normpath = { workspace = true }
+once_cell = { workspace = true }
+uniquote = { workspace = true }
+xshell = { workspace = true }
