@@ -1,0 +1,53 @@
+name: 'CI: Rust linting'
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+
+env:
+  CARGO_INCREMENTAL: 0 # Incremental not supported by our caching
+  CARGO_TERM_COLOR: always # GH action logs support terminal colors
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse # New format as of 2023-03-09
+
+jobs:
+  format:
+    name: Rustfmt code formatting check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run rustfmt
+        shell: pwsh
+        run: |
+          $rustfmt_output = cargo fmt --all --check -- --color always 2> $null
+          $rustfmt_exit_code = $LASTEXITCODE
+          if ($rustfmt_exit_code -ne 0 ) {
+            # Create an error annotation
+            # Line breaks can be created with a urlencoded newline '%0A'
+            Write-Output "::error title=Rustfmt code formatting check failed::$(@(
+                "Code formatting error.",
+                " ",
+                "This project requires code to conform to the rustfmt style.",
+                "Please run ``cargo fmt --all`` before commiting."
+              ) -join '%0A')"
+
+            Write-Output ""
+            Write-Output "Expand for details:"
+            Write-Output "::group::Detailed rustfmt error messages"
+            Write-Output $rustfmt_output
+            Write-Output "::endgroup::"
+            Write-Output ""
+          }
+          exit $rustfmt_exit_code
+
+
+  clippy:
+    name: Rust clippy lint check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: cybercmd
+      - run: echo "::add-matcher::.github/clippy-matcher.json"
+      - run: cargo clippy -- -Dwarnings
