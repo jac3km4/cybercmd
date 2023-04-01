@@ -1,11 +1,12 @@
 use std::{fs::create_dir_all, io};
 
 use normpath::BasePathBuf;
+#[allow(clippy::module_name_repetitions)]
 pub use normpath::{error::*, BasePath as Path, BasePathBuf as PathBuf};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
-pub enum PathsError {
+pub enum Error {
     #[error("Cannot get root directory")]
     IO {
         #[from]
@@ -20,6 +21,7 @@ pub enum PathsError {
 }
 
 #[doc(hidden)]
+#[allow(clippy::module_name_repetitions)]
 pub fn _internal_make_path(path: &mut BasePathBuf) {
     *path = {
         if let Ok(normalized) = path.normalize() {
@@ -39,6 +41,7 @@ pub fn _internal_make_path(path: &mut BasePathBuf) {
 }
 
 #[macro_export]
+#[allow(clippy::module_name_repetitions)]
 macro_rules! make_path {
     ($first:expr, $($segments:expr),+) => {{
         let mut path = $crate::path::PathBuf::new($first).expect("Invalid base path!");

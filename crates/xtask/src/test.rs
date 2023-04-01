@@ -5,7 +5,7 @@ use xshell::{cmd, Shell};
 
 use crate::{
     config::Config,
-    stage::{stage, stage_add_standalone},
+    stage::{stage, stage_add_standalone, RELEASE_ARGS},
 };
 
 pub fn test(config: &Config<'_>) -> Result<()> {
@@ -16,15 +16,7 @@ pub fn test(config: &Config<'_>) -> Result<()> {
     stage(
         config,
         sh,
-        &vec![
-            "--package",
-            "test",
-            "-Z",
-            "build-std=std,panic_abort",
-            "-Z",
-            "build-std-features=panic_immediate_abort",
-            "--release",
-        ],
+        &["--package", "test"].iter().chain(&RELEASE_ARGS),
     )?;
     stage_add_standalone(config)?;
 

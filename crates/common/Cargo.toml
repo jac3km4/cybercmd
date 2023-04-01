@@ -7,11 +7,18 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[features]
+logger = ["dep:flexi_logger"]
+download = ["dep:ureq", "dep:native-tls"]
+zip = ["dep:zip", "dep:zip-extensions"]
+path = ["dep:normpath"]
+
 [dependencies]
-anyhow = { workspace = true }
-flexi_logger = { workspace = true }
-normpath = { workspace = true, features = ["uniquote"] }
-reqwest = { workspace = true, features = ["blocking"] }
-thiserror = { workspace = true }
-zip = { workspace = true }
-zip-extensions = { workspace = true }
+anyhow.workspace = true
+flexi_logger = { workspace = true, optional = true }
+native-tls = { workspace = true, optional = true }
+normpath = { workspace = true, features = ["uniquote"], optional = true }
+thiserror.workspace = true
+ureq = { workspace = true, optional = true, default-features = false, features = ["native-tls"] }
+zip = { workspace = true, optional = true, default-features = false, features = ["deflate"] }
+zip-extensions = { workspace = true, optional = true }

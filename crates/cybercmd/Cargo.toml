@@ -13,17 +13,14 @@ rust-version.workspace = true
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
-anyhow = { workspace = true }
-chrono = { workspace = true }
-common = { workspace = true }
-derive_more = { workspace = true }
-detour = { workspace = true }
-log = { workspace = true }
-microtemplate = { workspace = true }
-once_cell = { workspace = true }
-serde = { workspace = true }
-thiserror = { workspace = true }
-toml = { workspace = true }
-uniquote = { workspace = true }
-widestring = { workspace = true }
+anyhow.workspace = true
+common = { workspace = true, features = ["logger", "path"] }
+detour.workspace = true
+log.workspace = true
+microtemplate.workspace = true
+once_cell.workspace = true
+serde.workspace = true
+toml.workspace = true
+uniquote.workspace = true
+widestring.workspace = true
 winapi = { workspace = true, features = ["minwindef", "winnt", "libloaderapi"] }

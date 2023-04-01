@@ -8,10 +8,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-anyhow = { workspace = true }
-clap = { workspace = true, features = ["derive", "cargo"] }
-common = { workspace = true }
-normpath = { workspace = true }
-once_cell = { workspace = true }
-uniquote = { workspace = true }
-xshell = { workspace = true }
+anyhow.workspace = true
+common = { workspace = true, features = ["path", "zip", "download"] }
+uniquote.workspace = true
+xshell.workspace = true

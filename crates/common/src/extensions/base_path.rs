@@ -2,20 +2,24 @@ use std::ffi::OsString;
 
 use normpath::PathExt;
 
-use crate::path::{Path, PathBuf, PathsError};
+use crate::path::{Error, Path, PathBuf};
 
-pub trait BasePathExt: private::Sealed {
-    fn ancestors(&self) -> BasePathExtAncestors<'_>;
-    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, PathsError>;
-    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, PathsError>;
+pub trait Extensions: private::Sealed {
+    fn ancestors(&self) -> AncestorsExtension<'_>;
+    /// # Errors
+    /// Returns `PathErrors`
+    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error>;
+    /// # Errors
+    /// Returns `PathErrors`
+    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error>;
 }
 
-impl BasePathExt for Path {
-    fn ancestors(&self) -> BasePathExtAncestors<'_> {
-        BasePathExtAncestors { next: Some(self) }
+impl Extensions for Path {
+    fn ancestors(&self) -> AncestorsExtension<'_> {
+        AncestorsExtension { next: Some(self) }
     }
 
-    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, PathsError> {
+    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;
@@ -30,12 +34,12 @@ impl BasePathExt for Path {
             common_root.push(match_components.0.as_os_str());
         }
         if common_root.as_os_str().is_empty() {
-            return Err(PathsError::NoCommonRoot);
+            return Err(Error::NoCommonRoot);
         }
         Ok(common_root)
     }
 
-    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, PathsError> {
+    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;
@@ -50,7 +54,7 @@ impl BasePathExt for Path {
             relative_branch.push(match_components.0.as_os_str());
         }
         if relative_branch.as_os_str().is_empty() {
-            return Err(PathsError::NoCommonRoot);
+            return Err(Error::NoCommonRoot);
         }
         Ok(relative_branch)
     }
@@ -58,13 +62,13 @@ impl BasePathExt for Path {
 
 // Path ancestors code adapted from rust std library. MIT or Apache-2.0 licensed.
 // See https://github.com/rust-lang/rust/blob/master/library/std/src/path.rs
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 #[must_use = "iterators are lazy and do nothing unless consumed"]
-pub struct BasePathExtAncestors<'a> {
+pub struct AncestorsExtension<'a> {
     next: Option<&'a Path>,
 }
 
-impl<'a> Iterator for BasePathExtAncestors<'a> {
+impl<'a> Iterator for AncestorsExtension<'a> {
     type Item = &'a Path;
 
     #[inline]
@@ -75,7 +79,7 @@ impl<'a> Iterator for BasePathExtAncestors<'a> {
     }
 }
 
-impl std::iter::FusedIterator for BasePathExtAncestors<'_> {}
+impl std::iter::FusedIterator for AncestorsExtension<'_> {}
 
 mod private {
     pub trait Sealed {}

@@ -10,6 +10,7 @@ use crate::AppContext;
 pub struct ArgumentContext(HashMap<String, String>);
 
 impl ArgumentContext {
+    #[must_use]
     pub fn new(paths: &Paths) -> Self {
         Self(
             [(
@@ -20,6 +21,7 @@ impl ArgumentContext {
         )
     }
 
+    #[must_use]
     pub fn from(context: &AppContext, hash_map: &HashMap<String, String>) -> Self {
         let mut new_context = Self::new(&context.paths);
         new_context.0.extend(hash_map.iter().map(|(key, val)| {

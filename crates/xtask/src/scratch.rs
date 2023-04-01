@@ -7,7 +7,7 @@ use crate::config::Config;
 pub fn scratch(config: &Config<'_>) -> Result<()> {
     println!("Scratch!");
     println!();
-    println!("Our config: {:#?}", config);
+    println!("Our config: {config:#?}");
     println!();
     println!("Cargo environment variables:");
     for (key, value) in std::env::vars() {
@@ -22,11 +22,11 @@ pub fn scratch(config: &Config<'_>) -> Result<()> {
 
     let test_path = PathBuf::new(r"C:\Windows\System\user32.dll")?;
     let components = test_path.components();
-    println!("For Path: {:?}", test_path);
-    println!("Components: {:#?}", components);
+    println!("For Path: {test_path:?}");
+    println!("Components: {components:#?}");
     println!("Iterated:");
     for component in components {
-        println!("{:?}", component);
+        println!("{component:?}");
     }
 
     Ok(())

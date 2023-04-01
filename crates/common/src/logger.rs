@@ -5,7 +5,9 @@ use flexi_logger::{
 
 // Blatantly stol... borrowed from https://github.com/jac3km4/redscript
 // Both projects are MIT licensed with the same original author, jekky
-pub fn setup_logger<P: AsRef<std::path::Path>>(logs_dir: P) -> Result<(), FlexiLoggerError> {
+/// # Errors
+/// Returns `FlexiLoggerError`
+pub fn setup<P: AsRef<std::path::Path>>(logs_dir: P) -> Result<(), FlexiLoggerError> {
     let file = FileSpec::default()
         .directory(logs_dir.as_ref())
         .basename("cybercmd");

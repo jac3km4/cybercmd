@@ -8,6 +8,7 @@ target = "x86_64-pc-windows-msvc"
 [target.'cfg(all())']
 rustflags = [
   "-Wclippy::all",
+  "-Wclippy::pedantic",
   "-Wclippy::match_same_arms",
   "-Wclippy::semicolon_if_nothing_returned",
   "-Wclippy::single_match_else",

@@ -1,6 +1,6 @@
 #![feature(macro_metavar_expr)]
 
-use clap::{Parser, Subcommand};
+use std::env;
 
 use crate::{config::Config, dist::dist, install::install, scratch::scratch, test::test};
 
@@ -11,34 +11,29 @@ mod scratch;
 mod stage;
 mod test;
 
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    #[command(subcommand)]
-    command: Commands,
+#[macro_export]
+macro_rules! make_cli {
+    ($first:expr, $($segments:expr),+) => {};
 }
 
-#[derive(Subcommand)]
-enum Commands {
-    Scratch,
-    Dist,
-    Install { game_dir: String },
-    Test,
-}
+make_cli!(dist, install, scratch);
 
 fn main() {
     try_main().expect("Unhandled error");
 }
 
 fn try_main() -> anyhow::Result<()> {
-    let cli = Cli::parse();
     let config = Config::new();
 
-    match &cli.command {
-        Commands::Scratch => scratch(&config)?,
-        Commands::Dist => dist(&config)?,
-        Commands::Install { game_dir } => install(&config, game_dir)?,
-        Commands::Test => test(&config)?,
+    let command = env::args().nth(1);
+    let remain = env::args().skip(2).collect::<Vec<String>>();
+    let game_dir = remain.join(" ");
+    match command.as_deref() {
+        Some("scratch") => scratch(&config)?,
+        Some("dist") => dist(&config)?,
+        Some("install") => install(&config, game_dir)?,
+        Some("test") => test(&config)?,
+        _ => panic!("Unknown command"),
     }
 
     Ok(())
