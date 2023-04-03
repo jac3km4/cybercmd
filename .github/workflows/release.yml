@@ -20,5 +20,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target\dist\cybercmd-standalone.zip
-            target\dist\cybercmd.zip
+            target/dist/cybercmd-standalone.zip
+            target/dist/cybercmd.zip
