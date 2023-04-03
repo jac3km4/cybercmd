@@ -35,11 +35,6 @@ impl ArgumentContext {
 
 impl microtemplate::Context for ArgumentContext {
     fn get_field(&self, field_name: &str) -> &str {
-        let result = if let Some(val) = self.0.get(field_name) {
-            val.as_str()
-        } else {
-            ""
-        };
-        result
+        self.0.get(field_name).map(AsRef::as_ref).unwrap_or("")
     }
 }
