@@ -7,13 +7,14 @@ on:
 
 jobs:
   publish:
-    name: Rust clippy lint check
+    name: Release and upload artifacts
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cybercmd
+      - run: rustup component add rust-src --toolchain nightly
       - run: cargo xtask dist
       - name: Release
         uses: softprops/action-gh-release@v1
