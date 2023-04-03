@@ -1,5 +1,5 @@
-# This is updated to work with cybercmd's new args features. Since the version distributed with redscript in scc.toml
-# may be out of date.
+[args]
+scriptsBlobPath = "{game_dir}\\r6\\cache\\modded\\final.redscripts"
 
 [[tasks]]
 command = "InvokeScc"
