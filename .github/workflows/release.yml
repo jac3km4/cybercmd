@@ -1,0 +1,23 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    name: Rust clippy lint check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: cybercmd
+      - run: cargo xtask dist
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target\dist\cybercmd-standalone.zip
+            target\dist\cybercmd.zip
