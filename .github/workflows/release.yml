@@ -14,7 +14,8 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cybercmd
-      - run: rustup component add rust-src --toolchain nightly
+      - name: Add rust-src component for build-std
+        run: rustup component add rust-src --toolchain nightly
       - run: cargo xtask dist
       - name: Release
         uses: softprops/action-gh-release@v1
