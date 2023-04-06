@@ -49,5 +49,6 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cybercmd
+          cache-on-failure: true
       - run: echo "::add-matcher::.github/clippy-matcher.json"
       - run: cargo clippy -- -Dwarnings
