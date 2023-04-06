@@ -25,6 +25,9 @@ pub fn dist(config: &Config<'_>) -> Result<()> {
         ],
     )?;
 
+    println!("Cleanup dist");
+    config.paths.clean_dist()?;
+
     let main_zip = &config.paths.dist.join("cybercmd.zip");
     println!("Creating: {}", main_zip.quote());
     zip_files(&config.paths.staging, main_zip)?;

@@ -73,6 +73,13 @@ impl Paths {
         Ok(())
     }
 
+    pub fn clean_dist(&self) -> anyhow::Result<()> {
+    println!("Removing: {:?}", &self.dist);
+    remove_dir_all(&self.dist)?;
+    create_dir_all(&self.dist)?;
+    Ok(())
+    }
+
     fn project_root() -> Result<PathBuf, PathsError> {
         let manifest_dir = PathBuf::new(env!("CARGO_MANIFEST_DIR"))?;
         let exe_path = std::env::current_exe()?;
