@@ -1,4 +1,5 @@
-name: Create Release Artifacts
+name: Release
+
 on:
   push:
     tags:
@@ -6,12 +7,12 @@ on:
 
 env:
   CARGO_INCREMENTAL: 0 # Incremental not supported by our caching
-  CARGO_TERM_COLOR: always # GH action logs support terminal colors
+  CARGO_TERM_COLOR: always # GH action logs supports terminal colors
   CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse # New format as of 2023-03-09
 
 jobs:
-  build-release:
-    name: Build and create release
+  publish:
+    name: Build, release, and upload artifacts
     runs-on: windows-latest
     permissions:
       contents: write
