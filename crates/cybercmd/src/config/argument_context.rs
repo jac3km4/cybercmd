@@ -37,6 +37,6 @@ impl ArgumentContext {
 
 impl microtemplate::Context for ArgumentContext {
     fn get_field(&self, field_name: &str) -> &str {
-        self.0.get(field_name).map(AsRef::as_ref).unwrap_or("")
+        self.0.get(field_name).map_or("", AsRef::as_ref)
     }
 }
