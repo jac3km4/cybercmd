@@ -11,13 +11,6 @@ mod scratch;
 mod stage;
 mod test;
 
-#[macro_export]
-macro_rules! make_cli {
-    ($first:expr, $($segments:expr),+) => {};
-}
-
-make_cli!(dist, install, scratch);
-
 fn main() {
     try_main().expect("Unhandled error");
 }
