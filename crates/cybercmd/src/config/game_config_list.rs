@@ -15,7 +15,7 @@ where
 
     #[inline]
     fn index(&self, idx: T) -> &Self::Output {
-        <Vec<GameConfig> as core::ops::Index<T>>::index(&self.0, idx)
+        self.0.index(idx)
     }
 }
 
@@ -25,7 +25,7 @@ impl IntoIterator for GameConfigList {
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        <Vec<GameConfig> as IntoIterator>::into_iter(self.0)
+       self.0.into_iter()
     }
 }
 
@@ -35,7 +35,7 @@ impl<'a> IntoIterator for &'a GameConfigList {
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        <&'a Vec<GameConfig> as IntoIterator>::into_iter(&self.0)
+        self.0.iter()
     }
 }
 
