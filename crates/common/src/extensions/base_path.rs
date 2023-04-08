@@ -8,10 +8,10 @@ pub trait Extensions: private::Sealed {
     fn ancestors(&self) -> AncestorsExtension<'_>;
     /// # Errors
     /// Returns `PathErrors`
-    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error>;
+    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error>;
     /// # Errors
     /// Returns `PathErrors`
-    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error>;
+    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error>;
 }
 
 impl Extensions for Path {
@@ -19,7 +19,7 @@ impl Extensions for Path {
         AncestorsExtension { next: Some(self) }
     }
 
-    fn common_root<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error> {
+    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;
@@ -39,7 +39,7 @@ impl Extensions for Path {
         Ok(common_root)
     }
 
-    fn relative_to<P: AsRef<std::path::Path>>(&self, sibling: P) -> Result<PathBuf, Error> {
+    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;

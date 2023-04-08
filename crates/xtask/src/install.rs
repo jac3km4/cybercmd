@@ -8,7 +8,7 @@ use crate::{
     stage::{stage, RELEASE_ARGS},
 };
 
-pub fn install<P: AsRef<Path>>(config: &Config<'_>, game_dir: P) -> Result<()> {
+pub fn install(config: &Config<'_>, game_dir: impl AsRef<Path>) -> Result<()> {
     let sh = Shell::new()?;
 
     println!();

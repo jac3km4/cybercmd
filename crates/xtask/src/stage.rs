@@ -14,6 +14,8 @@ pub const RELEASE_ARGS: [&str; 5] = [
     "--release",
 ];
 
+pub const TEST_ARGS: [&str; 2] = ["-Z", "build-std=std"];
+
 pub fn stage<I, II>(config: &Config<'_>, sh: &Shell, build_args: &I) -> Result<()>
 where
     I: IntoIterator<Item = II> + Clone,

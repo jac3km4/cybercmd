@@ -8,7 +8,7 @@ use zip_extensions::ZipWriterExtensions;
 #[cfg(feature = "download")]
 /// # Errors
 /// Returns `anyhow::Error` wrapping a `native_tls::Error`, `ureq::Error`, or `std::io::Error`
-pub fn download<S: AsRef<str>, P: AsRef<Path>>(source: S, dest: P) -> anyhow::Result<()> {
+pub fn download(source: impl AsRef<str>, dest: impl AsRef<Path>) -> anyhow::Result<()> {
     // Use native-tls (Windows' tls)
     let agent = ureq::AgentBuilder::new()
         .tls_connector(Arc::new(native_tls::TlsConnector::new()?))

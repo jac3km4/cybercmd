@@ -7,7 +7,7 @@ use flexi_logger::{
 // Both projects are MIT licensed with the same original author, jekky
 /// # Errors
 /// Returns `FlexiLoggerError`
-pub fn setup<P: AsRef<std::path::Path>>(logs_dir: P) -> Result<(), FlexiLoggerError> {
+pub fn setup(logs_dir: impl AsRef<std::path::Path>) -> Result<(), FlexiLoggerError> {
     let file = FileSpec::default()
         .directory(logs_dir.as_ref())
         .basename("cybercmd");
