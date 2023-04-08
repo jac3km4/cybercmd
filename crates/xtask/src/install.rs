@@ -29,11 +29,7 @@ pub fn install(config: &Config<'_>, game_dir: impl AsRef<Path>) -> Result<()> {
     Ok(())
 }
 
-fn recursive_copy<P1: AsRef<Path>, P2: AsRef<Path>>(
-    source: &P1,
-    dest: &P2,
-    sh: &Shell,
-) -> Result<()> {
+fn recursive_copy(source: &impl AsRef<Path>, dest: &impl AsRef<Path>, sh: &Shell) -> Result<()> {
     for entry in fs::read_dir(source)? {
         let entry = entry?;
         if entry.file_type()?.is_dir() {

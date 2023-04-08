@@ -74,7 +74,7 @@ fn get_final_cmd(context: &AppContext, initial_cmd_ustr: &U16CStr) -> Result<U16
     Ok(U16CString::from_str(cmd)?)
 }
 
-fn write_mod_cmd<W: Write>(context: &AppContext, config: &GameConfig, mut writer: W) -> Result<()> {
+fn write_mod_cmd(context: &AppContext, config: &GameConfig, mut writer: impl Write) -> Result<()> {
     for (key, val) in &config.args {
         let rendered = render(val, context.argument_context.clone());
         write!(writer, " -{key} {rendered:?}")?;
