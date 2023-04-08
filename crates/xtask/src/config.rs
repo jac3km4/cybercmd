@@ -3,7 +3,7 @@ use std::fs::{create_dir_all, remove_dir_all};
 use common::{
     extensions::{Extensions, PathExt},
     make_path,
-    path::{Error, PathBuf},
+    path::{Error as PathError, PathBuf},
 };
 
 #[derive(Debug)]
@@ -84,7 +84,7 @@ impl Paths {
         Ok(())
     }
 
-    fn project_root() -> Result<PathBuf, Error> {
+    fn project_root() -> Result<PathBuf, PathError> {
         let manifest_dir = PathBuf::new(env!("CARGO_MANIFEST_DIR"))?;
         let exe_path = std::env::current_exe()?;
         let root = manifest_dir.common_root(exe_path)?;
@@ -94,12 +94,12 @@ impl Paths {
 
     // This will be the /target directory, or something like /target/x86_64-pc-windows-msvc depending
     // on cargo's invocation and options
-    fn target_platform_path() -> Result<PathBuf, Error> {
+    fn target_platform_path() -> Result<PathBuf, PathError> {
         let root = std::env::current_exe()?
             .normalize()?
             .ancestors()
             .nth(2)
-            .ok_or(Error::NoParent)?
+            .ok_or(PathError::NoParent)?
             .normalize_virtually()?;
 
         Ok(root)

@@ -2,16 +2,16 @@ use std::ffi::OsString;
 
 use normpath::PathExt;
 
-use crate::path::{Error, Path, PathBuf};
+use crate::path::{Error as PathError, Path, PathBuf};
 
 pub trait Extensions: private::Sealed {
     fn ancestors(&self) -> AncestorsExtension<'_>;
     /// # Errors
     /// Returns `PathErrors`
-    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error>;
+    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, PathError>;
     /// # Errors
     /// Returns `PathErrors`
-    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error>;
+    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, PathError>;
 }
 
 impl Extensions for Path {
@@ -19,7 +19,7 @@ impl Extensions for Path {
         AncestorsExtension { next: Some(self) }
     }
 
-    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error> {
+    fn common_root(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, PathError> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;
@@ -34,12 +34,12 @@ impl Extensions for Path {
             common_root.push(match_components.0.as_os_str());
         }
         if common_root.as_os_str().is_empty() {
-            return Err(Error::NoCommonRoot);
+            return Err(PathError::NoCommonRoot);
         }
         Ok(common_root)
     }
 
-    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, Error> {
+    fn relative_to(&self, sibling: impl AsRef<std::path::Path>) -> Result<PathBuf, PathError> {
         let me = self.normalize()?;
         let me = me.components();
         let sibling = sibling.as_ref().normalize()?;
@@ -54,7 +54,7 @@ impl Extensions for Path {
             relative_branch.push(match_components.0.as_os_str());
         }
         if relative_branch.as_os_str().is_empty() {
-            return Err(Error::NoCommonRoot);
+            return Err(PathError::NoCommonRoot);
         }
         Ok(relative_branch)
     }

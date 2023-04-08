@@ -1,7 +1,7 @@
 use common::{
     extensions::{Extensions, PathExt},
     make_path,
-    path::{Error, PathBuf},
+    path::{Error as PathError, PathBuf},
     setup,
 };
 use log::info;
@@ -41,12 +41,12 @@ impl Paths {
         }
     }
 
-    fn get_game_path() -> Result<PathBuf, Error> {
+    fn get_game_path() -> Result<PathBuf, PathError> {
         let game_path = std::env::current_exe()?
             .normalize()?
             .ancestors()
             .nth(3)
-            .ok_or(Error::NoParent)?
+            .ok_or(PathError::NoParent)?
             .normalize_virtually()?;
 
         Ok(game_path)

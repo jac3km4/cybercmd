@@ -3,9 +3,8 @@ use std::{fs::create_dir_all, io};
 use normpath::BasePathBuf;
 #[allow(clippy::module_name_repetitions)]
 pub use normpath::{error::*, BasePath as Path, BasePathBuf as PathBuf};
-use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("Cannot get root directory")]
     IO {
