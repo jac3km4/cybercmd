@@ -5,7 +5,7 @@ use xshell::{cmd, Shell};
 
 use crate::{
     config::Config,
-    stage::{stage, stage_add_standalone},
+    stage::{stage, stage_add_standalone, TEST_ARGS},
 };
 
 pub fn test(config: &Config<'_>) -> Result<()> {
@@ -13,19 +13,7 @@ pub fn test(config: &Config<'_>) -> Result<()> {
     println!("Start: Running Tester");
     let sh = &Shell::new()?;
 
-    stage(
-        config,
-        sh,
-        &vec![
-            "--package",
-            "test",
-            "-Z",
-            "build-std=std,panic_abort",
-            "-Z",
-            "build-std-features=panic_immediate_abort",
-            "--release",
-        ],
-    )?;
+    stage(config, sh, &["--package", "test"].iter().chain(&TEST_ARGS))?;
     stage_add_standalone(config)?;
 
     println!("Adding config files from examples.");

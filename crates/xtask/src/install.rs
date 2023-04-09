@@ -1,24 +1,21 @@
-use std::{fs, path::Path};
+use std::{fs, fs::create_dir_all, path::Path};
 
 use anyhow::Result;
-use xshell::{cmd, Shell};
+use xshell::Shell;
 
-use crate::config::Config;
+use crate::{
+    config::Config,
+    stage::{stage, RELEASE_ARGS},
+};
 
-pub fn install<P: AsRef<Path>>(config: &Config<'_>, game_dir: P) -> Result<()> {
+pub fn install(config: &Config<'_>, game_dir: impl AsRef<Path>) -> Result<()> {
     let sh = Shell::new()?;
-    let cargo = &config.cargo_cmd;
 
-    cmd!(
-        sh,
-        "{cargo} build -Z build-std --release --package cybercmd"
-    )
-    .run()?;
+    println!();
+    println!("Start: Building distribution files");
+    stage(config, &sh, &RELEASE_ARGS)?;
 
-    println!("Adding config files (redscript)");
-    for path in fs::read_dir(&config.paths.config)? {
-        sh.copy_file(path?.path(), game_dir.as_ref().join("r6/config/cybercmd"))?;
-    }
+    recursive_copy(&config.paths.staging, &game_dir, &sh)?;
 
     println!("Copying cybercmd.asi");
     sh.copy_file(
@@ -28,6 +25,21 @@ pub fn install<P: AsRef<Path>>(config: &Config<'_>, game_dir: P) -> Result<()> {
 
     println!();
     println!("Done!");
+
+    Ok(())
+}
+
+fn recursive_copy(source: &impl AsRef<Path>, dest: &impl AsRef<Path>, sh: &Shell) -> Result<()> {
+    for entry in fs::read_dir(source)? {
+        let entry = entry?;
+        if entry.file_type()?.is_dir() {
+            let new_dest = dest.as_ref().join(entry.file_name());
+            create_dir_all(&new_dest)?;
+            recursive_copy(&entry.path(), &new_dest, sh)?;
+        } else {
+            sh.copy_file(entry.path(), dest)?;
+        }
+    }
 
     Ok(())
 }

@@ -5,7 +5,7 @@ use xshell::Shell;
 
 use crate::{
     config::Config,
-    stage::{stage, stage_add_standalone},
+    stage::{stage, stage_add_standalone, stage_fomod, RELEASE_ARGS},
 };
 
 pub fn dist(config: &Config<'_>) -> Result<()> {
@@ -13,17 +13,11 @@ pub fn dist(config: &Config<'_>) -> Result<()> {
 
     println!();
     println!("Start: Building distribution files");
-    stage(
-        config,
-        &sh,
-        &vec![
-            "-Z",
-            "build-std=std,panic_abort",
-            "-Z",
-            "build-std-features=panic_immediate_abort",
-            "--release",
-        ],
-    )?;
+    stage(config, &sh, &RELEASE_ARGS)?;
+    stage_fomod(config, &sh)?;
+
+    println!("Cleanup dist");
+    config.paths.clean_dist()?;
 
     let main_zip = &config.paths.dist.join("cybercmd.zip");
     println!("Creating: {}", main_zip.quote());

@@ -1,8 +1,8 @@
 use common::{
-    extensions::*,
+    extensions::{Extensions, PathExt},
     make_path,
-    path::{PathBuf, PathsError},
-    setup_logger,
+    path::{Error as PathError, PathBuf},
+    setup,
 };
 use log::info;
 
@@ -41,12 +41,12 @@ impl Paths {
         }
     }
 
-    fn get_game_path() -> Result<PathBuf, PathsError> {
+    fn get_game_path() -> Result<PathBuf, PathError> {
         let game_path = std::env::current_exe()?
             .normalize()?
             .ancestors()
             .nth(3)
-            .ok_or(PathsError::NoParent)?
+            .ok_or(PathError::NoParent)?
             .normalize_virtually()?;
 
         Ok(game_path)
@@ -54,9 +54,11 @@ impl Paths {
 }
 
 impl AppContext {
+    /// # Errors
+    /// Returns `anyhow::Error` aggregating many error types.
     pub fn new() -> anyhow::Result<AppContext> {
         let paths = Paths::new();
-        setup_logger(&paths.logs)?;
+        setup(&paths.logs)?;
         info!("Loading Cybercmd");
 
         let app_context = AppContext {

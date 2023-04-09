@@ -8,5 +8,5 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-widestring = { workspace = true }
+widestring.workspace = true
 winapi = { workspace = true, features = ["winver", "processenv", "winbase"] }

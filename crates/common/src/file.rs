@@ -1,20 +1,30 @@
-use std::{fs::File, path::Path};
+use std::{fs::File, io::copy, path::Path, sync::Arc};
 
-use reqwest::blocking as reqwest;
+#[cfg(feature = "zip")]
 use zip::CompressionMethod;
+#[cfg(feature = "zip")]
 use zip_extensions::ZipWriterExtensions;
 
-pub fn download_file<S: AsRef<str>, P: AsRef<Path>>(source: S, dest: P) -> anyhow::Result<()> {
-    let mut response = reqwest::get(source.as_ref())?;
+#[cfg(feature = "download")]
+/// # Errors
+/// Returns `anyhow::Error` wrapping a `native_tls::Error`, `ureq::Error`, or `std::io::Error`
+pub fn download(source: impl AsRef<str>, dest: impl AsRef<Path>) -> anyhow::Result<()> {
+    // Use native-tls (Windows' tls)
+    let agent = ureq::AgentBuilder::new()
+        .tls_connector(Arc::new(native_tls::TlsConnector::new()?))
+        .build();
+
+    let response = agent.get(source.as_ref()).call()?;
     let mut file = File::create(dest.as_ref())?;
-    let _ = &response.copy_to(&mut file)?;
+    let mut reader = response.into_reader();
+    copy(&mut reader, &mut file)?;
     Ok(())
 }
 
-pub fn zip_files<P1: AsRef<Path>, P2: AsRef<Path>>(
-    source: P1,
-    destination: P2,
-) -> anyhow::Result<()> {
+#[cfg(feature = "zip")]
+/// # Errors
+/// Returns `anyhow::Error` wrapping a `zip::ZipError`, or `std::io::Error`
+pub fn zip_files(source: impl AsRef<Path>, destination: impl AsRef<Path>) -> anyhow::Result<()> {
     let mut dest_file = File::create(destination.as_ref())?;
     let mut zip = zip::ZipWriter::new(&mut dest_file);
     let options = zip::write::FileOptions::default()

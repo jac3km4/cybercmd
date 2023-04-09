@@ -69,12 +69,12 @@ fn get_final_cmd(context: &AppContext, initial_cmd_ustr: &U16CStr) -> Result<U16
 
     for mod_config in &context.game_configs {
         write_mod_cmd(context, mod_config, &mut cmd)?;
-        run_mod_tasks(context, mod_config)?;
+        run_mod_tasks(context, mod_config);
     }
     Ok(U16CString::from_str(cmd)?)
 }
 
-fn write_mod_cmd<W: Write>(context: &AppContext, config: &GameConfig, mut writer: W) -> Result<()> {
+fn write_mod_cmd(context: &AppContext, config: &GameConfig, mut writer: impl Write) -> Result<()> {
     for (key, val) in &config.args {
         let rendered = render(val, context.argument_context.clone());
         write!(writer, " -{key} {rendered:?}")?;
@@ -82,7 +82,7 @@ fn write_mod_cmd<W: Write>(context: &AppContext, config: &GameConfig, mut writer
     Ok(())
 }
 
-fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
+fn run_mod_tasks(context: &AppContext, config: &GameConfig) {
     const NO_WINDOW_FLAGS: u32 = 0x0800_0000;
 
     for task in &config.tasks {
@@ -137,7 +137,6 @@ fn run_mod_tasks(context: &AppContext, config: &GameConfig) -> Result<()> {
             }
         }
     }
-    Ok(())
 }
 
 fn get_command_path(context: &AppContext, task: &Task) -> Result<PathBuf> {
@@ -180,7 +179,7 @@ pub unsafe extern "system" fn DllMain(
     _reserved: LPVOID,
 ) -> BOOL {
     if call_reason == DLL_PROCESS_ATTACH && is_valid_exe() {
-        return main().is_ok() as BOOL;
+        return i32::from(main().is_ok());
     }
     TRUE
 }
