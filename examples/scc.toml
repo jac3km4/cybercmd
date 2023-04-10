@@ -1,0 +1,9 @@
+[args]
+scriptsBlobPath = "{game_dir}\\r6\\cache\\modded\\final.redscripts"
+
+# This is the old style of task, it only works for InvokeScc. It is maintained here for backwards compatibility and transition.
+[[tasks]]
+command = "InvokeScc"
+path = "{game_dir}\\r6\\scripts"
+custom_cache_dir = "{game_dir}\\r6\\cache\\modded"
+terminate_on_errors = false

@@ -1,5 +1,6 @@
 use std::{
-    ffi::CString, fmt::Write, mem, os::windows::process::CommandExt, path::Path, process::Command,
+    collections::HashMap, ffi::CString, fmt::Write, mem, os::windows::process::CommandExt,
+    path::Path, process::Command,
 };
 
 use anyhow::{bail, Result};
@@ -83,67 +84,118 @@ fn write_mod_cmd(context: &AppContext, config: &GameConfig, mut writer: impl Wri
 }
 
 fn run_mod_tasks(context: &AppContext, config: &GameConfig) {
-    const NO_WINDOW_FLAGS: u32 = 0x0800_0000;
-
     for task in &config.tasks {
-        log::debug!("Running task: \"{}\"", task.command);
-
-        let cmd_path = get_command_path(context, task);
-        let arg_context = ArgumentContext::from(context, &task.substitutions);
-
-        let args = task
-            .template_args
-            .iter()
-            .map(|arg| render(arg.as_str(), arg_context.clone()));
-
-        if let Ok(cmd) = cmd_path {
-            if cmd.starts_with(&context.paths.tools) || task.command == "InvokeScc" {
-                let res = {
-                    let mut command: Command = Command::new(&cmd);
-                    command.args(args).current_dir(&context.paths.game);
-                    if task.no_window {
-                        command.creation_flags(NO_WINDOW_FLAGS);
-                    }
-                    log::info!("Run: {:?}", command);
-                    command.status().ok()
-                };
-                if matches!(res, Some(st) if st.success()) {
-                    log::info!("Task \"{}\" completed successfully!", task.command);
-                } else {
-                    log::error!("Task \"{}\" failed when run.", task.command);
-                    if task.terminate_on_errors {
-                        std::process::exit(0);
-                    }
-                }
-            } else {
-                log::error!("Task \"{}\" in invalid location.", task.command);
-                if task.terminate_on_errors {
-                    std::process::exit(0);
-                }
-            }
-        } else {
-            log::error!(
-                "Task \"{}\" from {} not found. ({:?})",
-                task.command,
-                config.file_name,
-                if let Ok(path) = cmd_path {
-                    path.as_os_str().to_string_lossy().to_string()
-                } else {
-                    String::new()
-                }
-            );
-            if task.terminate_on_errors {
-                std::process::exit(0);
-            }
+        match task {
+            Task::V1 {
+                command,
+                path,
+                custom_cache_dir,
+                terminate_on_errors,
+            } if *command == "InvokeScc" => run_task(
+                context,
+                config,
+                command,
+                *terminate_on_errors,
+                true,
+                &[
+                    "-compile",
+                    "{path}",
+                    "-customCacheDir",
+                    "{custom_cache_dir}",
+                ]
+                .map(str::to_string),
+                &HashMap::from([
+                    ("path".to_string(), path.to_string()),
+                    ("custom_cache_dir".to_string(), custom_cache_dir.to_string()),
+                ]),
+            ),
+            Task::V2 {
+                command,
+                terminate_on_errors,
+                no_window,
+                template_args,
+                substitutions,
+            } => run_task(
+                context,
+                config,
+                command,
+                *terminate_on_errors,
+                *no_window,
+                template_args,
+                substitutions,
+            ),
+            Task::V1 { .. } => log::error!("Couldn't parse task: {task:#?}"),
         }
     }
 }
 
-fn get_command_path(context: &AppContext, task: &Task) -> Result<PathBuf> {
-    if task.command == "InvokeScc" {
+fn run_task(
+    context: &AppContext,
+    config: &GameConfig,
+    command: &String,
+    terminate_on_errors: bool,
+    no_window: bool,
+    template_args: &[String],
+    substitutions: &HashMap<String, String>,
+) {
+    const NO_WINDOW_FLAGS: u32 = 0x0800_0000;
+
+    log::debug!("Running task: \"{}\"", command);
+
+    let cmd_path = get_command_path(context, command);
+    let arg_context = ArgumentContext::from(context, substitutions);
+
+    let args = template_args
+        .iter()
+        .map(|arg| render(arg, arg_context.clone()));
+
+    if let Ok(cmd) = cmd_path {
+        if cmd.starts_with(&context.paths.tools) || command == "InvokeScc" {
+            let res = {
+                let mut command: Command = Command::new(&cmd);
+                command.args(args).current_dir(&context.paths.game);
+                if no_window {
+                    command.creation_flags(NO_WINDOW_FLAGS);
+                }
+                log::info!("Run: {:?}", command);
+                command.status().ok()
+            };
+            if matches!(res, Some(st) if st.success()) {
+                log::info!("Task \"{}\" completed successfully!", command);
+            } else {
+                log::error!("Task \"{}\" failed when run.", command);
+                if terminate_on_errors {
+                    std::process::exit(0);
+                }
+            }
+        } else {
+            log::error!("Task \"{}\" in invalid location.", command);
+            if terminate_on_errors {
+                std::process::exit(0);
+            }
+        }
+    } else {
+        log::error!(
+            "Task \"{}\" from {} not found. ({:?})",
+            command,
+            config.file_name,
+            if let Ok(path) = cmd_path {
+                path.as_os_str().to_string_lossy().to_string()
+            } else {
+                String::new()
+            }
+        );
+        if terminate_on_errors {
+            std::process::exit(0);
+        }
+    }
+}
+
+fn get_command_path(context: &AppContext, command: &String) -> Result<PathBuf> {
+    if command == "InvokeScc" {
         return Ok(context.paths.scc.normalize()?);
     }
-    let cmd_with_exe = format!("{}.exe", task.command);
+    let cmd_with_exe = format!("{command}.exe");
 
     let result = context
         .paths
