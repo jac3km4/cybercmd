@@ -21,13 +21,24 @@ fn default_as_true() -> bool {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct Task {
-    pub(crate) command: String,
-    #[serde(default = "default_as_false")]
-    pub(crate) terminate_on_errors: bool,
-    #[serde(default = "default_as_true")]
-    pub(crate) no_window: bool,
-    #[serde(default)]
-    pub(crate) template_args: Vec<String>,
-    pub(crate) substitutions: HashMap<String, String>,
+#[serde(untagged)]
+pub enum Task {
+    V1 {
+        command: String,
+        path: String,
+        custom_cache_dir: String,
+        #[serde(default = "default_as_false")]
+        terminate_on_errors: bool,
+    },
+    V2 {
+        command: String,
+        #[serde(default = "default_as_false")]
+        terminate_on_errors: bool,
+        #[serde(default = "default_as_true")]
+        no_window: bool,
+        #[serde(default)]
+        template_args: Vec<String>,
+        #[serde(default)]
+        substitutions: HashMap<String, String>,
+    },
 }
