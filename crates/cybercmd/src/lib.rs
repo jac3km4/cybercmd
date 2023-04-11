@@ -191,7 +191,7 @@ fn run_task(
     }
 }
 
-fn get_command_path(context: &AppContext, command: &String) -> Result<PathBuf> {
+fn get_command_path(context: &AppContext, command: &str) -> Result<PathBuf> {
     if command == "InvokeScc" {
         return Ok(context.paths.scc.normalize()?);
     }
