@@ -5,7 +5,7 @@ use xshell::Shell;
 
 use crate::{
     config::Config,
-    stage::{stage, stage_add_standalone, stage_fomod, RELEASE_ARGS},
+    stage::{stage, stage_add_standalone, RELEASE_ARGS},
 };
 
 pub fn dist(config: &Config<'_>) -> Result<()> {
@@ -14,7 +14,6 @@ pub fn dist(config: &Config<'_>) -> Result<()> {
     println!();
     println!("Start: Building distribution files");
     stage(config, &sh, &RELEASE_ARGS)?;
-    stage_fomod(config, &sh)?;
 
     println!("Cleanup dist");
     config.paths.clean_dist()?;

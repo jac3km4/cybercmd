@@ -72,11 +72,6 @@ impl Paths {
         Ok(())
     }
 
-    pub fn create_fomod(&self) -> anyhow::Result<()> {
-        create_dir_all(&self.staging_fomod)?;
-        Ok(())
-    }
-
     pub fn clean_dist(&self) -> anyhow::Result<()> {
         println!("Removing: {:?}", &self.dist);
         remove_dir_all(&self.dist)?;

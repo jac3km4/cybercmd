@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, fs};
+use std::ffi::OsStr;
 
 use anyhow::Result;
 use common::file::download;
@@ -51,29 +51,8 @@ where
         config.paths.staging_plugins.join("cybercmd.asi"),
     )?;
 
-    println!("Adding config files (redscript)");
-    for config_file in fs::read_dir(&config.paths.config)? {
-        sh.copy_file(config_file?.path(), &config.paths.staging_config)?;
-    }
-
     println!("Done:  Staging cybercmd");
 
-    Ok(())
-}
-
-#[allow(clippy::module_name_repetitions)]
-pub fn stage_fomod(config: &Config<'_>, sh: &Shell) -> Result<()> {
-    println!("Adding Vortex install files to fomod/ directory");
-    config.paths.create_fomod()?;
-
-    sh.copy_file(
-        config.paths.installer.join("info.xml"),
-        &config.paths.staging_fomod,
-    )?;
-    sh.copy_file(
-        config.paths.installer.join("ModuleConfig.xml"),
-        &config.paths.staging_fomod,
-    )?;
     Ok(())
 }
 
