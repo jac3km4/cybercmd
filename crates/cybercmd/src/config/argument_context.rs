@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
+use common::paths::Paths;
 use log::debug;
 use microtemplate::render;
 
-use super::Paths;
 use crate::AppContext;
 
 #[derive(Clone, Debug)]
@@ -15,7 +15,12 @@ impl ArgumentContext {
         Self(
             [(
                 "game_dir".to_string(),
-                paths.game.as_os_str().to_string_lossy().to_string(),
+                paths
+                    .game_dir()
+                    .as_ref()
+                    .as_os_str()
+                    .to_string_lossy()
+                    .to_string(),
             )]
             .into(),
         )

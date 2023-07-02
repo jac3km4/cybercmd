@@ -1,9 +1,9 @@
 use std::{ffi::OsStr, fs};
 
-use common::extensions::PathExt;
+use common::{extensions::PathExt, paths::Paths};
 use uniquote::Quote;
 
-use super::{app_context::Paths, GameConfig};
+use super::GameConfig;
 
 pub struct GameConfigList(Vec<GameConfig>);
 
@@ -43,7 +43,7 @@ impl GameConfigList {
     pub fn new(paths: &Paths) -> anyhow::Result<Self> {
         let mut game_configs: Vec<GameConfig> = Vec::new();
 
-        let path = &paths.configs;
+        let path = paths.cybercmd_config_dir();
 
         log::debug!("Getting configs.");
 

@@ -1,17 +1,17 @@
 use std::{
-    collections::HashMap, ffi::CString, fmt::Write, mem, os::windows::process::CommandExt,
-    path::Path, process::Command,
+    collections::HashMap, ffi::CString, fmt::Write, mem, ops::Not,
+    os::windows::process::CommandExt, path::Path, process::Command,
 };
 
 use anyhow::{bail, Result};
-use common::path::PathBuf;
+use common::{extensions::PathExt, path::PathBuf};
 pub use config::AppContext;
 use detour::static_detour;
 use microtemplate::render;
 use once_cell::sync::Lazy;
 use widestring::{U16CStr, U16CString};
 use winapi::{
-    shared::minwindef::{BOOL, DWORD, HINSTANCE, LPVOID, TRUE},
+    shared::minwindef::{BOOL, DWORD, HINSTANCE, HMODULE, LPVOID, TRUE},
     um::{
         libloaderapi::{GetModuleHandleW, GetProcAddress},
         winnt::{DLL_PROCESS_ATTACH, LPCWSTR},
@@ -35,6 +35,8 @@ type FnGetCommandLineW = unsafe extern "system" fn() -> LPCWSTR;
 static CMD_STR: Lazy<U16CString> = Lazy::new(try_get_final_cmd);
 
 unsafe fn main() -> Result<()> {
+    common::logger::setup()?;
+
     let address = get_module_symbol_address("kernel32.dll", "GetCommandLineW")
         .expect("could not find 'GetCommandLineW' address");
     let target: FnGetCommandLineW = mem::transmute(address);
@@ -46,8 +48,6 @@ unsafe fn main() -> Result<()> {
             GetCommandLineW.call()
         }
     })?;
-
-    Lazy::force(&CMD_STR); // Run it before our hook, just in case.
 
     GetCommandLineW.enable()?;
     Ok(())
@@ -149,11 +149,19 @@ fn run_task(
         .iter()
         .map(|arg| render(arg, arg_context.clone()));
 
+    let is_scc = command == "InvokeScc";
+    let red4ext_exists = unsafe { get_module("red4ext.dll") }.is_some();
+
+    if is_scc && red4ext_exists {
+        log::info!("red4ext has been detected, scc invokation will be skipped");
+        return;
+    }
+
     if let Ok(cmd) = cmd_path {
-        if cmd.starts_with(&context.paths.tools) || command == "InvokeScc" {
+        if cmd.starts_with(context.paths.tools_dir()) || is_scc {
             let res = {
                 let mut command: Command = Command::new(&cmd);
-                command.args(args).current_dir(&context.paths.game);
+                command.args(args).current_dir(&context.paths.game_dir());
                 if no_window {
                     command.creation_flags(NO_WINDOW_FLAGS);
                 }
@@ -193,13 +201,14 @@ fn run_task(
 
 fn get_command_path(context: &AppContext, command: &str) -> Result<PathBuf> {
     if command == "InvokeScc" {
-        return Ok(context.paths.scc.normalize()?);
+        return Ok(context.paths.scc_exe().as_ref().normalize()?);
     }
     let cmd_with_exe = format!("{command}.exe");
 
     let result = context
         .paths
-        .tools
+        .tools_dir()
+        .as_ref()
         .join(
             if let Some(file_name) = Path::new(&cmd_with_exe).file_name() {
                 file_name
@@ -212,11 +221,15 @@ fn get_command_path(context: &AppContext, command: &str) -> Result<PathBuf> {
     Ok(result)
 }
 
-unsafe fn get_module_symbol_address(module: &str, symbol: &str) -> Option<usize> {
+unsafe fn get_module(module: &str) -> Option<HMODULE> {
     let module = U16CString::from_str_truncate(module);
+    let res = GetModuleHandleW(module.as_ptr());
+    res.is_null().not().then_some(res)
+}
+
+unsafe fn get_module_symbol_address(module: &str, symbol: &str) -> Option<usize> {
     let symbol = CString::new(symbol).ok()?;
-    let handle = GetModuleHandleW(module.as_ptr());
-    match GetProcAddress(handle, symbol.as_ptr()) as usize {
+    match GetProcAddress(get_module(module)?, symbol.as_ptr()) as usize {
         0 => None,
         n => Some(n),
     }
