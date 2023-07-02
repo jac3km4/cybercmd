@@ -1,5 +1,6 @@
 [workspace]
 members = ["crates/cybercmd", "crates/xtask", "crates/test", "crates/common"]
+resolver = "2"
 
 [workspace.package]
 rust-version = "1.70"
