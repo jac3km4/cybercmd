@@ -1,4 +1,4 @@
-pub(self) use game_config_list::GameConfigList;
+pub use game_config_list::GameConfigList;
 
 #[allow(clippy::module_name_repetitions)]
 pub use self::{

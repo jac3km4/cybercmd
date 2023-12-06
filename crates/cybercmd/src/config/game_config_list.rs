@@ -7,6 +7,12 @@ use super::GameConfig;
 
 pub struct GameConfigList(Vec<GameConfig>);
 
+impl GameConfigList {
+    pub fn iter(&self) -> impl Iterator<Item = &GameConfig> {
+        self.0.iter()
+    }
+}
+
 impl<T> core::ops::Index<T> for GameConfigList
 where
     Vec<GameConfig>: core::ops::Index<T>,
@@ -40,6 +46,9 @@ impl<'a> IntoIterator for &'a GameConfigList {
 }
 
 impl GameConfigList {
+    /// # Errors
+    ///
+    /// Returns `anyhow::Error` on IO errors.
     pub fn new(paths: &Paths) -> anyhow::Result<Self> {
         let mut game_configs: Vec<GameConfig> = Vec::new();
 
