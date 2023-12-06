@@ -68,7 +68,19 @@ fn get_final_cmd(context: &AppContext, initial_cmd_ustr: &U16CStr) -> Result<U16
     log::debug!("get_final_cmd");
     let mut cmd = initial_cmd_ustr.to_string()?;
 
+    let red4ext_exists = unsafe { get_module("red4ext.dll") }.is_some();
+
     for mod_config in &context.game_configs {
+        if red4ext_exists
+            && mod_config
+                .tasks
+                .iter()
+                .any(|task| matches!(task, Task::V1 { command, .. } if command == "InvokeScc"))
+        {
+            log::info!("red4ext has been detected, scc task will be skipped");
+            continue;
+        }
+
         write_mod_cmd(context, mod_config, &mut cmd)?;
         run_mod_tasks(context, mod_config);
     }
@@ -150,12 +162,6 @@ fn run_task(
         .map(|arg| render(arg, arg_context.clone()));
 
     let is_scc = command == "InvokeScc";
-    let red4ext_exists = unsafe { get_module("red4ext.dll") }.is_some();
-
-    if is_scc && red4ext_exists {
-        log::info!("red4ext has been detected, scc invokation will be skipped");
-        return;
-    }
 
     if let Ok(cmd) = cmd_path {
         if cmd.starts_with(context.paths.tools_dir()) || is_scc {
