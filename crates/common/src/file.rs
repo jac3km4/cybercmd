@@ -9,16 +9,16 @@ use zip_extensions::ZipWriterExtensions;
 /// # Errors
 /// Returns `anyhow::Error` wrapping a `native_tls::Error`, `ureq::Error`, or `std::io::Error`
 pub fn download(source: impl AsRef<str>, dest: impl AsRef<Path>) -> anyhow::Result<()> {
-    let config = ureq::config::Config::builder()
+    let agent = ureq::Agent::config_builder()
         .tls_config(
             ureq::tls::TlsConfig::builder()
-                // requires the native-tls feature
                 .provider(ureq::tls::TlsProvider::NativeTls)
+                .root_certs(ureq::tls::RootCerts::PlatformVerifier)
                 .build(),
         )
-        .build();
+        .build()
+        .new_agent();
 
-    let agent = config.new_agent();
     let response = agent.get(source.as_ref()).call()?;
     let mut file = File::create(dest.as_ref())?;
     let mut reader = response.into_body().into_reader();
