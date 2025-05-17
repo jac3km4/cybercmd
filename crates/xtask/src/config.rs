@@ -8,19 +8,15 @@ use common::{
 
 #[derive(Debug)]
 pub struct Paths {
-    pub config: PathBuf,
     pub debug: PathBuf,
     pub dist: PathBuf,
-    pub installer: PathBuf,
     pub release: PathBuf,
     pub root: PathBuf,
     pub staging: PathBuf,
     pub staging_bin: PathBuf,
     pub staging_config: PathBuf,
     pub staging_plugins: PathBuf,
-    pub staging_fomod: PathBuf,
     pub examples: PathBuf,
-    pub target_platform: PathBuf,
 }
 
 #[derive(Debug)]
@@ -48,16 +44,12 @@ impl Paths {
             release: make_path!(&target_platform, "release"),
             debug: make_path!(&target_platform, "debug"),
             staging_config: make_path!(&staging, "r6", "config", "cybercmd"),
-            staging_fomod: make_path!(&staging, "fomod"),
             staging_plugins: make_path!(&staging_bin, "plugins"),
-            installer: make_path!(&root, "resources", "installer"),
-            config: make_path!(&root, "resources", "config"),
             examples: make_path!(&root, "examples"),
 
             // Order matters, items referenced in peers must be at the end
             staging_bin,
             staging,
-            target_platform,
             root,
         }
     }

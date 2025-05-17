@@ -152,7 +152,7 @@ fn run_task(
 ) {
     const NO_WINDOW_FLAGS: u32 = 0x0800_0000;
 
-    log::debug!("Running task: \"{}\"", command);
+    log::debug!("Running task: \"{command}\"");
 
     let cmd_path = get_command_path(context, command);
     let arg_context = ArgumentContext::from(context, substitutions);
@@ -167,23 +167,23 @@ fn run_task(
         if cmd.starts_with(context.paths.tools_dir()) || is_scc {
             let res = {
                 let mut command: Command = Command::new(&cmd);
-                command.args(args).current_dir(&context.paths.game_dir());
+                command.args(args).current_dir(context.paths.game_dir());
                 if no_window {
                     command.creation_flags(NO_WINDOW_FLAGS);
                 }
-                log::info!("Run: {:?}", command);
+                log::info!("Run: {command:?}");
                 command.status().ok()
             };
             if matches!(res, Some(st) if st.success()) {
-                log::info!("Task \"{}\" completed successfully!", command);
+                log::info!("Task \"{command}\" completed successfully!");
             } else {
-                log::error!("Task \"{}\" failed when run.", command);
+                log::error!("Task \"{command}\" failed when run.");
                 if terminate_on_errors {
                     std::process::exit(0);
                 }
             }
         } else {
-            log::error!("Task \"{}\" in invalid location.", command);
+            log::error!("Task \"{command}\" in invalid location.");
             if terminate_on_errors {
                 std::process::exit(0);
             }

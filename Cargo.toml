@@ -3,7 +3,6 @@ members = ["crates/cybercmd", "crates/xtask", "crates/test", "crates/common"]
 resolver = "2"
 
 [workspace.package]
-rust-version = "1.70"
 edition = "2021"
 license = "MIT"
 authors = ["jac3km4", "AndASM"]
@@ -15,22 +14,50 @@ xtask = { path = "crates/xtask", version = "0.0.0" }
 
 anyhow = "1"
 detour = { git = "https://github.com/veeenu/detour-rs", rev = "ec23632" }
-flexi_logger = "0.25"
+flexi_logger = "0.30"
 log = "0.4"
 microtemplate = "1"
 native-tls = "0.2"
 normpath = "1"
 once_cell = "1"
 serde = { version = "1", features = ["derive"] }
-thiserror = "1"
-toml = "0.7"
-uniquote = "3"
-ureq = { version = "2", default-features = false }
+thiserror = "2"
+toml = "0.8"
+uniquote = "4"
+ureq = { version = "3", default-features = false }
 widestring = "1"
 winapi = { version = "0.3" }
 xshell = "0.2"
-zip = { version = "0.6", default-features = false }
-zip-extensions = { git = "https://github.com/AndASM/zip-extensions-rs.git", tag = "v0.6.3" }
+zip = { version = "3", default-features = false }
+zip-extensions = "0.8"
+
+[workspace.lints.rust]
+warnings = "warn"
+future-incompatible = "warn"
+let-underscore = "warn"
+nonstandard-style = "warn"
+rust-2018-compatibility = "warn"
+rust-2018-idioms = "warn"
+rust-2021-compatibility = "warn"
+
+[workspace.lints.clippy]
+all = "warn"
+match_same_arms = "warn"
+semicolon_if_nothing_returned = "warn"
+single_match_else = "warn"
+redundant_closure_for_method_calls = "warn"
+cloned_instead_of_copied = "warn"
+redundant_else = "warn"
+unnested_or_patterns = "warn"
+unreadable_literal = "warn"
+type_repetition_in_bounds = "warn"
+equatable_if_let = "warn"
+implicit_clone = "warn"
+default_trait_access = "warn"
+explicit_deref_methods = "warn"
+explicit_iter_loop = "warn"
+inefficient_to_string = "warn"
+match_bool = "warn"
 
 [profile.release]
 lto = true

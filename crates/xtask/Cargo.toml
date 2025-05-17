@@ -5,10 +5,12 @@ version = "0.0.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
-rust-version.workspace = true
 
 [dependencies]
 anyhow.workspace = true
 common = { workspace = true, features = ["path", "zip", "download"] }
 uniquote.workspace = true
 xshell.workspace = true
+
+[lints]
+workspace = true

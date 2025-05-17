@@ -5,7 +5,6 @@ version = "0.0.0"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
-rust-version.workspace = true
 
 [features]
 logger = ["dep:flexi_logger"]
@@ -19,6 +18,13 @@ flexi_logger = { workspace = true, optional = true }
 native-tls = { workspace = true, optional = true }
 normpath = { workspace = true, features = ["uniquote"], optional = true }
 thiserror.workspace = true
-ureq = { workspace = true, optional = true, default-features = false, features = ["native-tls"] }
-zip = { workspace = true, optional = true, default-features = false, features = ["deflate"] }
+ureq = { workspace = true, optional = true, default-features = false, features = [
+    "native-tls",
+] }
+zip = { workspace = true, optional = true, default-features = false, features = [
+    "deflate",
+] }
 zip-extensions = { workspace = true, optional = true }
+
+[lints]
+workspace = true

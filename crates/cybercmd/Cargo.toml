@@ -7,7 +7,6 @@ version = "0.0.7"
 authors.workspace = true
 edition.workspace = true
 license.workspace = true
-rust-version.workspace = true
 
 [lib]
 crate-type = ["rlib", "cdylib"]
@@ -24,3 +23,6 @@ toml.workspace = true
 uniquote.workspace = true
 widestring.workspace = true
 winapi = { workspace = true, features = ["minwindef", "winnt", "libloaderapi"] }
+
+[lints]
+workspace = true

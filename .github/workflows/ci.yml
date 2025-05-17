@@ -1,21 +1,19 @@
-name: 'CI: Rust linting'
+name: "CI: Rust linting"
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
 
 env:
-  CARGO_INCREMENTAL: 0 # Incremental not supported by our caching
   CARGO_TERM_COLOR: always # GH action logs support terminal colors
-  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse # New format as of 2023-03-09
 
 jobs:
   format:
     name: Rustfmt code formatting check
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run rustfmt
         shell: pwsh
         run: |
@@ -40,12 +38,11 @@ jobs:
           }
           exit $rustfmt_exit_code
 
-
   clippy:
     name: Rust clippy lint check
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cybercmd

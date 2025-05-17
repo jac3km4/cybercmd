@@ -6,9 +6,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 env:
-  CARGO_INCREMENTAL: 0 # Incremental not supported by our caching
   CARGO_TERM_COLOR: always # GH action logs supports terminal colors
-  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse # New format as of 2023-03-09
 
 jobs:
   publish:
@@ -17,7 +15,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: cybercmd

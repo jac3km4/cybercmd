@@ -35,7 +35,7 @@ impl ArgumentContext {
                 render(val, context.argument_context.clone()),
             )
         }));
-        debug!("Created new ArgumentContext: {:?}", new_context);
+        debug!("Created new ArgumentContext: {new_context:?}");
         new_context
     }
 }
